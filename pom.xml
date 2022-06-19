@@ -1,0 +1,201 @@
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>net.sf.jason</groupId>
+  <artifactId>mast</artifactId>
+  <packaging>jar</packaging>
+  <name>MAST</name>
+  <version>0.0.0</version>
+  <description>Jason is a fully-fledged interpreter for an extended version of AgentSpeak, a BDI agent-oriented logic programming language, and is implemented in Java. Using JADE a multi-agent system can be distributed over a network effortlessly.</description>
+  <url>http://jason.sf.net</url>
+
+  <licenses>
+    <license>
+      <name>GNU Library or Lesser General Public License version 2.0 (LGPLv2)</name>
+      <url>http://www.gnu.org/licenses/gpl-2.0.html</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
+  <scm>
+    <url>svn://svn.code.sf.net/p/jason/svn/trunk</url>
+    <connection>svn://svn.code.sf.net/p/jason/svn/trunk</connection>
+  </scm>
+
+  <developers>
+    <developer>
+      <id>Jomi</id>
+      <name>Jomi F.  Hubner</name>
+      <email>jomifred@gmail.com</email>
+    </developer>
+    <developer>
+      <id>Rafael</id>
+      <name>Rafael H. Bordini</name>
+      <email>rafael.h.bordini@gmail.com</email>
+    </developer>
+  </developers>
+
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <version>1.8</version>
+        <executions>
+          <execution>
+            <phase>generate-resources</phase>
+            <configuration>
+              <tasks>
+                <echo message="Descompactando pasta Jason-1.4.1" />
+                <unzip src="Jason-1.4.1.zip" dest="target/MAST-${project.version}" />
+              </tasks>
+            </configuration>
+            <goals>
+              <goal>run</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>3.0.0</version>
+        <configuration>
+          <finalName>jason</finalName>
+          <archive>
+            <manifest>
+              <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+              <addClasspath>true</addClasspath>
+              <mainClass>jason.util.ConfigGUI</mainClass>
+            </manifest>
+          </archive>
+          <outputDirectory>target/MAST-${project.version}/lib</outputDirectory>
+        </configuration>
+      </plugin>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <configuration>
+                <source>8</source>
+                <target>8</target>
+            </configuration>
+        </plugin>
+    </plugins>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+      </resource>
+    </resources>
+  </build>
+
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.11</version>
+    </dependency>
+
+    <dependency>
+      <groupId>mastransport.jedit</groupId>
+      <artifactId>jedit</artifactId>
+      <version>1.4.1</version>
+    </dependency>
+
+    <dependency>
+      <groupId>mastransport.BufferTabs</groupId>
+      <artifactId>BufferTabs</artifactId>
+      <version>1.4.1</version>
+    </dependency>
+
+    <dependency>
+      <groupId>mastransport.SideKick</groupId>
+      <artifactId>SideKick</artifactId>
+      <version>1.4.1</version>
+    </dependency>
+
+    <dependency>
+      <groupId>mastransport.ErrorList</groupId>
+      <artifactId>ErrorList</artifactId>
+      <version>1.4.1</version>
+    </dependency>
+
+    <dependency>
+      <groupId>mastransport.jade</groupId>
+      <artifactId>jade</artifactId>
+      <version>1.4.1</version>
+    </dependency>
+
+    <dependency>
+      <groupId>mastransport.c4jason</groupId>
+      <artifactId>c4jason</artifactId>
+      <version>1.4.1</version>
+    </dependency>
+
+    <dependency>
+        <groupId>mastransport.ant</groupId>
+        <artifactId>ant</artifactId>
+        <version>1.4.1</version>
+    </dependency>
+
+    <dependency>
+      <groupId>mastransport.ant-launcher</groupId>
+      <artifactId>ant-launcher</artifactId>
+      <version>1.4.1</version>
+    </dependency>
+
+    <dependency>
+      <groupId>mastransport.cartago</groupId>
+      <artifactId>cartago</artifactId>
+      <version>1.4.1</version>
+    </dependency>
+
+    <dependency>
+      <groupId>mastransport.commons-codec</groupId>
+      <artifactId>commons-codec</artifactId>
+      <version>1.3</version>
+    </dependency>
+
+    <dependency>
+      <groupId>mastransport.jacamo</groupId>
+      <artifactId>jacamo</artifactId>
+      <version>1.4.1</version>
+    </dependency>
+
+    <dependency>
+      <groupId>mastransport.javacc</groupId>
+      <artifactId>javacc</artifactId>
+      <version>1.4.1</version>
+    </dependency>
+
+    <dependency>
+      <groupId>mastransport.moise</groupId>
+      <artifactId>moise</artifactId>
+      <version>1.4.1</version>
+    </dependency>
+
+    <dependency>
+      <groupId>mastransport.UmlGraph</groupId>
+      <artifactId>UmlGraph</artifactId>
+      <version>1.4.1</version>
+    </dependency>
+
+    <dependency>
+      <groupId>br.pro.turing</groupId>
+      <artifactId>javino_stable</artifactId>
+      <version>1.1</version>
+    </dependency>
+
+    <dependency>
+      <groupId>br.pucrio.inf.lac</groupId>
+      <artifactId>contextnet</artifactId>
+      <version>2.5</version>
+    </dependency>
+    <!-- Jade 4.0.1/Ant dependency>
+      <groupId>...</groupId>
+      <artifactId>...</artifactId>
+      <version>...</version>
+    </dependency-->
+  </dependencies>
+    <properties>
+        <maven.compiler.source>1.5</maven.compiler.source>
+        <maven.compiler.target>1.5</maven.compiler.target>
+    </properties>
+</project>

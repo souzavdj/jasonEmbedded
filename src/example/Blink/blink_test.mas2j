@@ -1,0 +1,10 @@
+MAS blink_test {
+
+	infrastructure: Centralised
+
+	agents:
+		argo_agent agentArchClass Argo;
+
+	aslSourcePath:
+		"src/example/Blink/asl";
+}

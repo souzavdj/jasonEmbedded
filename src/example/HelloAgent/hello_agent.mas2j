@@ -1,0 +1,10 @@
+MAS hello_agent {
+
+	infrastructure: Centralised
+
+	agents:
+		agent;
+
+	aslSourcePath:
+		"src/example/HelloAgent/asl";
+}
