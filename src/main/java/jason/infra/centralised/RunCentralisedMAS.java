@@ -79,6 +79,8 @@ public class RunCentralisedMAS {
 
     private static boolean debug = false;
 
+    private static boolean console = false;
+
     private CentralisedEnvironment env = null;
 
     private CentralisedExecutionControl control = null;
@@ -119,6 +121,14 @@ public class RunCentralisedMAS {
             }
         } else {
             projectFileName = args[0];
+        }
+
+        for (int i = 0; i < args.length; i++) {
+            if (args[i].equals("-console")) {
+                System.setOut(System.out);
+                System.setErr(System.err);
+                console = true;
+            }
         }
 
         setupLogger();
@@ -216,7 +226,15 @@ public class RunCentralisedMAS {
     }
 
     public static synchronized void setupLogger() {
-        if (readFromJAR) {
+        if (console) {
+            Handler[] hs = Logger.getLogger("").getHandlers();
+            for (int i = 0; i < hs.length; i++) {
+                Logger.getLogger("").removeHandler(hs[i]);
+            }
+            ConsoleHandler consoleHandler = new ConsoleHandler();
+            consoleHandler.setFormatter(new MASConsoleLogFormatter());
+            Logger.getLogger("").addHandler(consoleHandler);
+        } else if (readFromJAR) {
             Handler[] hs = Logger.getLogger("").getHandlers();
             for (int i = 0; i < hs.length; i++) {
                 Logger.getLogger("").removeHandler(hs[i]);
