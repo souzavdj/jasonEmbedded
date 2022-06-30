@@ -15,7 +15,7 @@ souRemetente.
 +!start : true <-
 	.print("Sou o remetente e vou enviar uma mensagem ao destinatário.");
 	.sendOut("788b2b22-baa6-4c61-b1bb-01cff1f5f878", tell, oi);
-	.moveOut("788b2b22-baa6-4c61-b1bb-01cff1f5f878", predator);.
+	.moveOut("788b2b22-baa6-4c61-b1bb-01cff1f5f878", inquilinism);.
 
 /*+!ola : true <-
     .print("Sou o remetente e recebi uma resposta do destinatário").
