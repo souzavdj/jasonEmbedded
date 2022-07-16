@@ -20,7 +20,7 @@ public class port extends DefaultInternalAction {
         if (os.substring(0, 1).equals("W")) {
             ts.getUserAgArch().setPort(illoc.toString());
         } else {
-            ts.getUserAgArch().setPort("/" + illoc.toString());
+            ts.getUserAgArch().setPort("/dev/" + illoc.toString());
         }
         return true;
     }
