@@ -22,13 +22,7 @@ import java.util.UUID;
 
 public class CommMiddleware implements NodeConnectionListener {
 
-    private static String gatewayIP = "skynet.turing.pro.br";
-
-    private static int gatewayPort = 5500;
-
     private MrUdpNodeConnection connection;
-
-    private UUID myUUID = UUID.fromString("788b2b22-baa6-4c61-b1bb-01cff1f5f878");
 
     private String agName = "";
 
@@ -54,10 +48,11 @@ public class CommMiddleware implements NodeConnectionListener {
 
     private static final String COMMUNICATOR_SIZE_MESSAGE_DEFINITION = "ss";
 
-    public CommMiddleware() {
+    public CommMiddleware(String gatewayIP, int gatewayPort, String myUUID) {
+        UUID uuid = UUID.fromString(myUUID);
         InetSocketAddress address = new InetSocketAddress(gatewayIP, gatewayPort);
         try {
-            this.connection = new MrUdpNodeConnection(this.myUUID);
+            this.connection = new MrUdpNodeConnection(uuid);
             this.connection.addNodeConnectionListener(this);
             this.connection.connect(address);
         } catch (IOException e) {
@@ -71,10 +66,6 @@ public class CommMiddleware implements NodeConnectionListener {
 
     public void setAgName(String agName) {
         this.agName = agName;
-    }
-
-    public void setMyUUID(String myUUID) {
-        this.myUUID = UUID.fromString(myUUID);
     }
 
     public List<AslTransferenceModel> getAgentsReceived() {

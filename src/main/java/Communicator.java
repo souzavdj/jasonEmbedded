@@ -17,13 +17,18 @@ import java.util.concurrent.TimeUnit;
 
 public class Communicator extends AgArch {
 
-    private CommMiddleware commBridge = new CommMiddleware();
+    private CommMiddleware commBridge = null;
 
     private static final String AGENT_FILE_EXTENSION = ".asl";
 
     @Override
-    public CommMiddleware getCommBridge() {
+    public void connectCN(String gatewayIP, int gatewayPort, String myUUID) {
+        this.commBridge = new CommMiddleware(gatewayIP, gatewayPort, myUUID);
         this.commBridge.setAgName(this.getAgName());
+    }
+
+    @Override
+    public CommMiddleware getCommBridge() {
         return this.commBridge;
     }
 
