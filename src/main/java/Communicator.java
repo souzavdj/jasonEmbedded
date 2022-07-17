@@ -28,6 +28,13 @@ public class Communicator extends AgArch {
     }
 
     @Override
+    public void disconnectCN() {
+        if (this.commBridge != null) {
+            this.commBridge.disconnect();
+        }
+    }
+
+    @Override
     public CommMiddleware getCommBridge() {
         return this.commBridge;
     }

@@ -100,6 +100,16 @@ public class CommMiddleware implements NodeConnectionListener {
     public void disconnected(NodeConnection arg0) {
     }
 
+    public void disconnect() {
+        if (this.connection != null) {
+            try {
+                this.connection.disconnect();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     /*
      * [Pantoja]:
      * a) Tem que tratar as mensagens recebidas. Colocar em um

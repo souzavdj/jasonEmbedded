@@ -365,4 +365,6 @@ public class AgArch implements AgArchInfraTier, Comparable<AgArch> {
 
     public void connectCN(String gatewayIP, int gatewayPort, String myUUID) {}
 
+    public void disconnectCN() {}
+
 }

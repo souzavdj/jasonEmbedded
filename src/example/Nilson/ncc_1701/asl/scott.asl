@@ -7,8 +7,10 @@ souDestinatario.
 /* Plans */
 
 +!start : true <-
-    .connectCN("skynet.turing.pro.br", 5500, "788b2b22-baa6-4c61-b1bb-01cff1f5f878");
-	.print("Computer, Commander Montgomery Scott, Chief Engineering Office").
+    .connectCN("skynet.turing.pro.br", 5500, "788b2b22-baa6-4c61-b1bb-01cff1f5f877");
+	.print("Computer, Commander Montgomery Scott, Chief Engineering Office");
+	.disconnectCN;
+	.connectCN("skynet.turing.pro.br", 5500, "788b2b22-baa6-4c61-b1bb-01cff1f5f878").
 
 +beam_us_up_scotty <-
     .print("Transporter ready!");
