@@ -40,6 +40,8 @@ public class CommMiddleware implements NodeConnectionListener {
 
     private UUID senderUUID;
 
+    private String myUUID;
+
     private static final String EMPTY_VALUE = "";
 
     private static final String AGENT_FILE_EXTENSION = ".asl";
@@ -49,6 +51,7 @@ public class CommMiddleware implements NodeConnectionListener {
     private static final String COMMUNICATOR_SIZE_MESSAGE_DEFINITION = "ss";
 
     public CommMiddleware(String gatewayIP, int gatewayPort, String myUUID) {
+        this.myUUID = myUUID;
         UUID uuid = UUID.fromString(myUUID);
         InetSocketAddress address = new InetSocketAddress(gatewayIP, gatewayPort);
         try {
@@ -82,6 +85,10 @@ public class CommMiddleware implements NodeConnectionListener {
 
     public List<String> getNameAgents() {
         return this.nameAgents;
+    }
+
+    public String getMyUUID() {
+        return this.myUUID;
     }
 
     public void connected(NodeConnection arg0) {

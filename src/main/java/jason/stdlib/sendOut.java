@@ -187,9 +187,12 @@ public class sendOut extends DefaultInternalAction {
 
         checkArguments(args);
         String to = args[0].toString();
+        if (!to.startsWith("\"")) {
+            to = "\"" + to + "\"";
+        }
         Term ilf = args[1];
         Term pcnt = args[2];
-        ts.getUserAgArch().getCommBridge().sendMsgToContextNet(ts.getUserAgArch().getAgName(), to, ilf, pcnt);
+        ts.getUserAgArch().getCommBridge().sendMsgToContextNet(ts.getUserAgArch().getCommBridge().getMyUUID(), to, ilf, pcnt);
         return true;
     }
 
