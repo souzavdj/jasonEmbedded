@@ -6,5 +6,5 @@ MAS hello_agent {
 		agent;
 
 	aslSourcePath:
-		"./hello_world/asl";
+		"src/example/Nilson/hello_world/asl";
 }
