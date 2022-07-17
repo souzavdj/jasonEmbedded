@@ -31,6 +31,12 @@ public class AslFileGenerator {
     /** Símbolo de início das declarações de planos. */
     private static final String INITIAL_PLANS_SYMBOL = "+!";
 
+    /** Regex para encontrar o início das declarações de plano contingência. */
+    private static final String INITIAL_CONTINGENCY_PLANS_SYMBOL_REGEX = "-!";
+
+    /** Símbolo de início das declarações de planos contingências. */
+    private static final String INITIAL_CONTINGENCY_PLANS_SYMBOL = "-!";
+
     /** Texto inicial para localizar planos padrão de kqml. */
     private static final String KQML_PREFIX = "@kqml";
 
@@ -128,9 +134,15 @@ public class AslFileGenerator {
         for (Plan plan : agent.getPL().getPlans()) {
             String p = plan.toASString();
             if (!p.startsWith(KQML_PREFIX)) {
-                String[] arr = p.split(INITIAL_PLANS_SYMBOL_REGEX);
+                String[] planName = p.split(INITIAL_PLANS_SYMBOL_REGEX);
+                if (planName.length > 1) {
+                    plains.append(INITIAL_PLANS_SYMBOL + planName[1] + NEXT_LINE);
+                }
 
-                plains.append(INITIAL_PLANS_SYMBOL + arr[1] + NEXT_LINE);
+                String[] contingencyPlanName = p.split(INITIAL_CONTINGENCY_PLANS_SYMBOL_REGEX);
+                if (contingencyPlanName.length > 1) {
+                    plains.append(INITIAL_CONTINGENCY_PLANS_SYMBOL + contingencyPlanName[1] + NEXT_LINE);
+                }
             }
         }
 
