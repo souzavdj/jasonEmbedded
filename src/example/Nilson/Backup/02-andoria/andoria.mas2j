@@ -1,0 +1,10 @@
+MAS planet {
+
+	infrastructure: Centralised
+
+	agents:
+		kirk agentArchClass Communicator;
+
+	aslSourcePath:
+        "src/example/Nilson/02-andoria";
+}

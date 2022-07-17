@@ -1,0 +1,33 @@
+MAS ncc_1701 {
+
+	infrastructure: Centralised
+
+	agents:
+		scott agentArchClass Communicator;
+
+    aslSourcePath:
+            "src/example/Nilson/01-enterprise";
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
