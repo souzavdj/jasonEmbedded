@@ -48,7 +48,7 @@ public class AslFileGenerator {
         content.append(generatePlans(agent) + NEXT_LINE);
 
         AslTransferenceModel aslTransferenceModel = new AslTransferenceModel(agArch.getAgName(),
-                content.toString().getBytes());
+                content.toString().getBytes(), agArch.getClass().getName());
         return aslTransferenceModel;
     }
 

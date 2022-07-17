@@ -13,15 +13,19 @@ public class AslTransferenceModel implements Serializable {
     /** Conteúdo do arquivo. */
     private byte[] fileContent;
 
+    /** Arquitetura do agente. */
+    private String agentArchClass;
+
     /**
      * Construtor.
      *
      * @param name {@link #name}
      * @param fileContent {@link #fileContent}
      */
-    public AslTransferenceModel(String name, byte[] fileContent) {
+    public AslTransferenceModel(String name, byte[] fileContent, String agentArchClass) {
         this.name = name;
         this.fileContent = fileContent;
+        this.agentArchClass = agentArchClass;
     }
 
     public String getName() {
@@ -30,5 +34,9 @@ public class AslTransferenceModel implements Serializable {
 
     public byte[] getFileContent() {
         return fileContent;
+    }
+
+    public String getAgentArchClass() {
+        return agentArchClass;
     }
 }

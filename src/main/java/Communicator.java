@@ -44,25 +44,36 @@ public class Communicator extends AgArch {
         }
     }
 
+    private int startAgent(String name, String path, String agArchClasse, int qtdAgentsInstantiated) {
+        try {
+            String agClass = null;
+            List<String> agArchClasses = new ArrayList<String>();
+            if(agArchClasse != null && !agArchClasse.isEmpty()) {
+                agArchClasses.add(agArchClasse);
+            }
+            ClassParameters bbPars = null;
+
+            RuntimeServicesInfraTier rs = this.getTS().getUserAgArch().getRuntimeServices();
+            name = rs.createAgent(name, path, agClass, agArchClasses, bbPars, this.getTS().getSettings());
+            rs.startAgent(name);
+            qtdAgentsInstantiated++;
+            return qtdAgentsInstantiated;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return qtdAgentsInstantiated;
+    }
+
     private void executePredatorProtocol () {
         int qtdAgentsInstantiated = 0;
         for (AslTransferenceModel aslTransferenceModel : this.commBridge.getAgentsReceived()) {
             String name = aslTransferenceModel.getName();
             String path = getPath(name);
+            String agArchClass = aslTransferenceModel.getAgentArchClass();
 
-            try {
-                String agClass = null;
-                List<String> agArchClasses = new ArrayList<String>();
-                ClassParameters bbPars = null;
-
-                RuntimeServicesInfraTier rs = this.getTS().getUserAgArch().getRuntimeServices();
-                name = rs.createAgent(name, path, agClass, agArchClasses, bbPars, this.getTS().getSettings());
-                rs.startAgent(name);
-                qtdAgentsInstantiated++;
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            qtdAgentsInstantiated = this.startAgent(name, path, agArchClass, qtdAgentsInstantiated);
         }
+
         if (qtdAgentsInstantiated == this.commBridge.getAgentsReceived().size()) {
             // Todos os agentes instanciados, enviando mensagem para deletar da origem
             this.commBridge.sendMsgToDeleteAllAgents();
@@ -78,18 +89,9 @@ public class Communicator extends AgArch {
         for (AslTransferenceModel aslTransferenceModel : this.commBridge.getAgentsReceived()) {
             String name = aslTransferenceModel.getName();
             String path = getPath(name);
-            try {
-                String agClass = null;
-                List<String> agArchClasses = new ArrayList<String>();
-                ClassParameters bbPars = null;
+            String agArchClass = aslTransferenceModel.getAgentArchClass();
 
-                RuntimeServicesInfraTier rs = this.getTS().getUserAgArch().getRuntimeServices();
-                name = rs.createAgent(name, path, agClass, agArchClasses, bbPars, this.getTS().getSettings());
-                rs.startAgent(name);
-                qtdAgentsInstantiated++;
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            qtdAgentsInstantiated = this.startAgent(name, path, agArchClass, qtdAgentsInstantiated);
         }
         if (qtdAgentsInstantiated == this.commBridge.getAgentsReceived().size()) {
             // Todos os agentes instanciados, enviando mensagem para deletar da origem
@@ -105,18 +107,9 @@ public class Communicator extends AgArch {
         for (AslTransferenceModel aslTransferenceModel : this.commBridge.getAgentsReceived()) {
             String name = aslTransferenceModel.getName();
             String path = getPath(name);
-            try {
-                String agClass = null;
-                List<String> agArchClasses = new ArrayList<String>();
-                ClassParameters bbPars = null;
+            String agArchClass = aslTransferenceModel.getAgentArchClass();
 
-                RuntimeServicesInfraTier rs = this.getTS().getUserAgArch().getRuntimeServices();
-                name = rs.createAgent(name, path, agClass, agArchClasses, bbPars, this.getTS().getSettings());
-                rs.startAgent(name);
-                qtdAgentsInstantiated++;
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            qtdAgentsInstantiated = this.startAgent(name, path, agArchClass, qtdAgentsInstantiated);
         }
         if (qtdAgentsInstantiated == this.commBridge.getAgentsReceived().size()) {
             // Todos os agentes instanciados, enviando mensagem para deletar da origem
