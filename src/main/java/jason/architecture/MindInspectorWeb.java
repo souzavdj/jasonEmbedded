@@ -107,14 +107,14 @@ public class MindInspectorWeb {
                                     "<iframe width=\"20%\" height=\"100%\" align=left src=\"/agents\" border=5 "
                                             + "frameborder=0 ></iframe>");
                             so.append(
-                                    "<iframe width=\"78%\" height=\"100%\" align=left src=\"/agent.asl-mind/no_ag\" "
+                                    "<iframe width=\"78%\" height=\"100%\" align=left src=\"/agent-mind/no_ag\" "
                                             + "name=\"am\" border=5 frameborder=0></iframe>");
                             so.append("</body></html>");
-                        } else if (path.indexOf("agent.asl-mind") >= 0) {
+                        } else if (path.indexOf("agent-mind") >= 0) {
                             if (tryToIncludeMindInspectorForAg(path)) {
                                 so.append("<meta http-equiv=\"refresh\" content=0>");
                             } else {
-                                so.append("unkown agent.asl!");
+                                so.append("unkown agent!");
                             }
                         }
                         responseBody.write(so.toString().getBytes());
@@ -128,7 +128,7 @@ public class MindInspectorWeb {
     }
 
     private String getAgNameFromPath(String path) {
-        int nameStart = path.indexOf("agent.asl-mind") + 11;
+        int nameStart = path.indexOf("agent-mind") + 11;
         if (nameStart < 0) {
             return null;
         }
@@ -183,7 +183,7 @@ public class MindInspectorWeb {
                                 ("<font size=\"+2\"><p style='color: red; font-family: arial;'>Agents</p></font>")
                                         .getBytes());
                         for (String a : histories.keySet()) {
-                            responseBody.write(("- <a href=\"/agent.asl-mind/" + a
+                            responseBody.write(("- <a href=\"/agent-mind/" + a
                                     + "/latest\" target=\"am\" style=\"font-family: arial; text-decoration: none\">" + a
                                     + "</a><br/>").getBytes());
                         }
@@ -230,7 +230,7 @@ public class MindInspectorWeb {
             return null;
         }
         try {
-            String url = "/agent.asl-mind/" + agName;
+            String url = "/agent-mind/" + agName;
             httpServer.createContext(url, new HttpHandler() {
                 public void handle(HttpExchange exchange) throws IOException {
                     String requestMethod = exchange.getRequestMethod();
@@ -250,7 +250,7 @@ public class MindInspectorWeb {
                                 if (tryToIncludeMindInspectorForAg(path)) {
                                     so.append("<meta http-equiv=\"refresh\" content=0>");
                                 } else {
-                                    so.append("unkown agent.asl!");
+                                    so.append("unkown agent!");
                                 }
                             } else {
 
@@ -302,19 +302,19 @@ public class MindInspectorWeb {
                                     so.append("</head><body>");
                                     if (h.size() > 1) {
                                         //so.append("history: ");                            
-                                        so.append("<a href=/agent.asl-mind/" + agName + "/latest>latest state</a> ");
+                                        so.append("<a href=/agent-mind/" + agName + "/latest>latest state</a> ");
                                         for (i = h.size() - 1; i > 0; i--) {
-                                            so.append("<a href=\"/agent.asl-mind/" + agName + "/" + i
+                                            so.append("<a href=\"/agent-mind/" + agName + "/" + i
                                                     + "\" style=\"text-decoration: none\">" + i + "</a> ");
                                         }
                                         so.append(
-                                                "<a href=\"/agent.asl-mind/" + agName + "/clear\">clear history</a> ");
+                                                "<a href=\"/agent-mind/" + agName + "/clear\">clear history</a> ");
                                         so.append("<hr/>");
                                     }
                                     so.append(getAgStateAsString(agState, false));
                                     //so.append("<hr/><a href=\"/\"> list of agents</a> ");
                                 } else {
-                                    so.append("select an agent.asl");
+                                    so.append("select an agent");
                                 }
                             }
                             responseBody.write(so.toString().getBytes());

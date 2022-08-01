@@ -131,7 +131,7 @@ public class MindInspectorAgArch extends AgArch {
             } catch (NoValueException e1) {
                 e1.printStackTrace();
             }
-            new Thread("update agent.asl mind inspector") {
+            new Thread("update agent mind inspector") {
                 public void run() {
                     try {
                         while (isRunning()) {

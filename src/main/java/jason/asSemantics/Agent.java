@@ -1324,7 +1324,7 @@ public class Agent {
      * Gets the agent "mind" as XML
      */
     public Element getAsDOM(Document document) {
-        Element ag = (Element) document.createElement("agent.asl");
+        Element ag = (Element) document.createElement("agent");
         ag.setAttribute("name", ts.getUserAgArch().getAgName());
         ag.setAttribute("cycle", "" + ts.getUserAgArch().getCycleNumber());
 
@@ -1346,7 +1346,7 @@ public class Agent {
             }
         }
         Document document = builder.newDocument();
-        Element ag = (Element) document.createElement("agent.asl");
+        Element ag = (Element) document.createElement("agent");
         if (getASLSrc() != null && getASLSrc().length() > 0) {
             ag.setAttribute("source", getASLSrc());
         }
