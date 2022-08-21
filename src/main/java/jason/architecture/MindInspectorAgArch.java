@@ -22,6 +22,7 @@
 
 package jason.architecture;
 
+import br.pro.turing.javino.Javino;
 import jason.NoValueException;
 import jason.asSyntax.ASSyntax;
 import jason.asSyntax.NumberTerm;
@@ -79,6 +80,17 @@ public class MindInspectorAgArch extends AgArch {
     MindInspectorWeb webServer = null;
 
     boolean hasHistory = false;
+    private AgArch arch;
+
+    public MindInspectorAgArch(AgArch arch) {
+        super();
+        this.arch = arch;
+    }
+
+    public MindInspectorAgArch() {
+        super();
+    }
+
 
     @Override
     public void init() {
@@ -376,4 +388,7 @@ public class MindInspectorAgArch extends AgArch {
         }
     }
 
+    public Javino getArgo() {
+        return this.arch.getArgo();
+    }
 }

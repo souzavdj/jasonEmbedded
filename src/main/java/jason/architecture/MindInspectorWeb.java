@@ -148,7 +148,7 @@ public class MindInspectorWeb {
                 if (arch != null) {
                     // should add a new conf for mindinspector, otherwise will start a new gui for the agent
                     arch.getTS().getSettings().addOption("mindinspector", "web(cycle,html,history)");
-                    MindInspectorAgArch miArch = new MindInspectorAgArch();
+                    MindInspectorAgArch miArch = new MindInspectorAgArch(arch);
                     arch.insertAgArch(miArch);
                     miArch.init();
                     miArch.addAgState();
