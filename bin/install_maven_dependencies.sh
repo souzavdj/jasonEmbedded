@@ -14,6 +14,7 @@ mvn install:install-file -Dfile=../lib/moise.jar -DgroupId=mastransport.moise -D
 mvn install:install-file -Dfile=../lib/UmlGraph.jar -DgroupId=mastransport.UmlGraph -DartifactId=UmlGraph -Dversion=1.4.1 -Dpackaging=jar -DgeneratePom=true
 mvn install:install-file -Dfile=../lib/javino_stable_1.1.jar -DgroupId=br.pro.turing -DartifactId=javino_stable -Dversion=1.1 -Dpackaging=jar -DgeneratePom=true
 mvn install:install-file -Dfile=../lib/javino_stable_1.3.jar -DgroupId=br.pro.turing -DartifactId=javino_stable -Dversion=1.3 -Dpackaging=jar -DgeneratePom=true
+mvn install:install-file -Dfile=../lib/javino_stable_1.3.9.jar -DgroupId=br.pro.turing -DartifactId=javino_stable -Dversion=1.3.9 -Dpackaging=jar -DgeneratePom=true
 mvn install:install-file -Dfile=../lib/contextnet-2.5.jar -DgroupId=br.pucrio.inf.lac -DartifactId=contextnet -Dversion=2.5 -Dpackaging=jar -DgeneratePom=true
 mvn install:install-file -Dfile=../lib/contextnet-2.7.jar -DgroupId=br.pucrio.inf.lac -DartifactId=contextnet -Dversion=2.7 -Dpackaging=jar -DgeneratePom=true
 
