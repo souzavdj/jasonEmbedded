@@ -23,8 +23,6 @@
 
 package jason.stdlib;
 
-import jason.AslTransferenceModel;
-import jason.AslFileGenerator;
 import jason.JasonException;
 import jason.asSemantics.DefaultInternalAction;
 import jason.asSemantics.Message;
@@ -32,10 +30,6 @@ import jason.asSemantics.TransitionSystem;
 import jason.asSemantics.Unifier;
 import jason.asSyntax.StringTerm;
 import jason.asSyntax.Term;
-import jason.infra.centralised.CentralisedAgArch;
-import jason.infra.centralised.RunCentralisedMAS;
-
-import java.util.Map;
 
 /**
  * <p>
