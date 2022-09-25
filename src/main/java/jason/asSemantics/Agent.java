@@ -44,9 +44,6 @@ import jason.profiling.QueryProfiling;
 import jason.runtime.Settings;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.*;
@@ -58,8 +55,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-//import br.pro.turing.javino.Javino;
 
 /**
  * The Agent class has the belief base and plan library of an AgentSpeak agent.
@@ -130,20 +125,9 @@ public class Agent {
 
             BeliefBase bb = (BeliefBase) Class.forName(bbPars.getClassName()).newInstance();
             ag.setBB(bb); // the agent's BB have to be already set for the BB
-            // initialisation
-            // [Fabian] Inicializando agente
             ag.initAg();
-
-            // [Fabian] Inicializando a base de crenças.
             bb.init(ag, bbPars.getParametersArray());
-            // Pantoja-01: modifiquei para passar o nome do agente direto ao
-            // invés do diretório.
-            ag.loadXMLObjectives(arch.getAgName());
-
-            // ag.loadXMLObjectives(asSrc.replace(".asl", ""));
-
-            // [Fabian] Até então, os agentes estão vazios. Acho que o codigo fonte será lido agora.
-            ag.load(asSrc); // load the source code of the agent
+            ag.load(asSrc); // loads the source code of the agent
             return ag;
         } catch (Exception e) {
             throw new JasonException("as2j: error creating the customised Agent class! - ", e);
@@ -198,6 +182,7 @@ public class Agent {
         load(asSrc);
     }
 
+    /* 
     public void loadXMLObjectives(String agName) {
         objectives = new Hashtable<String, Objective>();
         File f = null;
@@ -205,16 +190,8 @@ public class Agent {
         try {
             f = new File(".");
             paths = f.listFiles();
-            /**
-             * Pantoja-04: Poderia ser criado uma pasta /filter e colocar os XML
-             * dentro para reduzir o tempo de busca.
-             **/
             for (File path : paths) {
-                // Pantoja-02: No c�digo original a barra para pegar o nome
-                // estava invertida!
                 String fileName = path.toString().replace(".\\", "");
-                // Pantoja-03: A verifica��o agora � feita diretamente pelo nome
-                // do agente.
                 if (fileName.startsWith(agName)) {
                     String tagName = fileName.split("-")[1].split("\\.")[0];
                     Objective ob = new Objective(tagName);
@@ -305,6 +282,7 @@ public class Agent {
         }
         return Operator.E;
     }
+    */
 
     /**
      * parse and load the agent code, asSrc may be null
@@ -885,15 +863,15 @@ public class Agent {
             return false;
         }
         switch (operator) {
-            case E:
+            case EXCEPT:
                 return (literal.matches(filter));
-            case B:
+            case ALL:
                 return Double.parseDouble(literal) > Double.parseDouble(filter);
-            case BE:
+            case ONLY:
                 return Double.parseDouble(literal) >= Double.parseDouble(filter);
-            case S:
+            case REMOVE:
                 return Double.parseDouble(literal) < Double.parseDouble(filter);
-            case SE:
+            case VALUE:
                 return Double.parseDouble(literal) <= Double.parseDouble(filter);
             default:
                 return false;
@@ -910,7 +888,7 @@ public class Agent {
         }
     }
 
-    private static boolean remove(Literal literal) {
+   /* private static boolean remove(Literal literal) {
         Filter filter = currentObjective.hashFilter.get(literal.toString().split("\\(")[0]);
         if (filter == null) {
             return false;
@@ -929,21 +907,19 @@ public class Agent {
             }
         }
         return true;
-    }
+    }  */
 
     private static void filter(List<Literal> percept) {
         if (currentObjective == null) {
-            // System.out.println("not filtering");
             return;
         }
         Iterator<Literal> it = percept.iterator();
         while (it.hasNext()) {
-            // System.out.println("filtering");
-            if (remove(it.next())) {
-                it.remove();
+            //if (remove(it.next())) {
+            //    it.remove();
             }
         }
-    }
+    
 
     public void changeFilter(String filterName) {
         currentObjective = objectives.get(filterName);
@@ -953,39 +929,20 @@ public class Agent {
      * Belief Update Function: adds/removes percepts into belief base
      */
     public void buf(List<Literal> percepts) {
-        //		Boolean hasMsg = this.jBridge.listenArduino("COM8");
-        //		//System.out.println("[javino] Has Message?: " + hasMsg);
-        //        List<Literal> jPercept = new ArrayList<Literal>();
-        //
-        //        if (hasMsg) {
-        //			//System.out.println("[javino]: getting data");
-        //			jPercept.add(Literal.parseLiteral("distance("+ this.jBridge.getData() +")"));
-        //			//System.out.println("[javino]: " +jPercept.toString());
-        //			//percepts.add(jPercept);
-        //			percepts = jPercept;
-        //        }
-        //
         if (percepts == null) {
-            //System.out.println("[javino]: null");
             return;
         }
-        //timer.begin(percepts.size(), getBB().size());			//*** ativa o log ***
-
+       
         int adds = 0;
         int dels = 0;
         long startTime = qProfiling == null ? 0 : System.nanoTime();
 
-        //timer.initFilter();			//*** ativa o log ***
-        //****** Pantoja ******
         filter(percepts);
-        //timer.endFilter();			//*** ativa o log ***
-
+      
         Iterator<Literal> perceptsInBB = getBB().getPercepts();
         while (perceptsInBB.hasNext()) {
             Literal l = perceptsInBB.next();
 
-            // could not use percepts.contains(l), since equalsAsTerm must be
-            // used (to ignore annotations)
             boolean wasPerceived = false;
             Iterator<Literal> ip = percepts.iterator();
             while (ip.hasNext()) {

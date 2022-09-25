@@ -5,9 +5,26 @@
  */
 package jason.filter;
 
-/**
- * @author Barbara
- */
 public enum Operator {
-    E, B, BE, S, SE
+    EXCEPT("except"), ONLY("only"), REMOVE("remove"), VALUE("value"), ALL("all");
+
+    private String value;
+
+    public String getValue() {
+        return value;
+    }
+
+    Operator(String value) {
+        this.value = value;
+    }
+
+    public static Operator fromString(String value) {
+        for (Operator o : Operator.values()) {
+            if (o.value.equalsIgnoreCase(value)) {
+                return o;
+            }
+        }
+        return null;
+    }
+
 }

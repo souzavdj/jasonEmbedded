@@ -5,54 +5,62 @@
  */
 package jason.filter;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
+import jason.asSyntax.Term;
 
-/**
- * @author Barbara
- */
 public class Filter {
 
-    private String predicate;
-
-    private LinkedList<Parameter> parameters;
-
-    private LinkedList<Annotation> anotations;
-
-    public String getPredicate() {
-        return predicate;
-    }
-
-    public void setPredicate(String predicate) {
-        this.predicate = predicate;
-    }
-
-    public LinkedList<Parameter> getParameters() {
-        return parameters;
-    }
-
-    public void setParameters(LinkedList<Parameter> parameters) {
-        this.parameters = parameters;
-    }
-
-    public LinkedList<Annotation> getAnotations() {
-        return anotations;
-    }
-
-    public void setAnotations(LinkedList<Annotation> anotations) {
-        this.anotations = anotations;
-    }
-
-    public void addParameter(Parameter p) {
-        parameters.add(p);
-    }
-
-    public void addAnotation(Annotation a) {
-        anotations.add(a);
-    }
+    private Operator operator;
+    private ArrayList<String> predicates;
+    private Term expression;
 
     public Filter() {
-        parameters = new LinkedList<Parameter>();
-        anotations = new LinkedList<Annotation>();
+        predicates = new ArrayList<String>();
+    }
+
+    public Filter(Operator operator, ArrayList<String> predicates, Term expression) {
+        this.operator = operator;
+        this.predicates = predicates;
+        this.expression = expression;
+    }
+
+    public Operator getOperator() {
+        return operator;
+    }
+
+    public void setOperator(Operator operator) {
+        this.operator = operator;
+    }
+
+    public ArrayList<String> getPredicate() {
+        return predicates;
+    }
+
+    public void setPredicate(ArrayList<String> predicates) {
+        this.predicates = predicates;
+    }
+
+    public void addPredicate(String predicate) {
+        this.predicates.add(predicate);
+    }
+
+    public Term getExpression() {
+        return expression;
+    }
+
+    public void setExpression(Term expression) {
+        this.expression = expression;
+    }
+
+    @Override
+    public String toString() {
+        String internalAction = "[FILTER]: .filter(" + this.operator.getValue() + "," + this.predicates.get(0);
+        if (this.expression != null) {
+            internalAction += "," + this.expression.toString() + ")";
+        } else {
+            internalAction += ")";
+        }
+        return internalAction;
     }
 
 }

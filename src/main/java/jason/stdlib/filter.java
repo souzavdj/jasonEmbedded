@@ -1,15 +1,20 @@
 package jason.stdlib;
 
+import java.util.ArrayList;
 import jason.JasonException;
 import jason.asSemantics.DefaultInternalAction;
 import jason.asSemantics.TransitionSystem;
 import jason.asSemantics.Unifier;
 import jason.asSyntax.Term;
+import jason.filter.Filter;
+import jason.filter.Operator;
 
 public class filter extends DefaultInternalAction {
 
     @Override
     public Object execute(TransitionSystem ts, Unifier un, Term[] args) throws JasonException {
+        ArrayList<Filter> filters = new ArrayList<Filter>();
+
         if (args.length > 1 && args.length <= 3) {
             String filter = args[0].toString();
             String type = args[1].toString();
@@ -17,7 +22,11 @@ public class filter extends DefaultInternalAction {
                 if (args.length == 2) {
                     if (type.equals("all") || type.equals("except") || type.equals("only")
                             || type.equals("value")) {
-                        ts.getAg().changeFilter(filter);
+                        ArrayList<String> predicates = new ArrayList<String>();
+                        predicates.add(args[1].toString());
+                        filters.add(new Filter(Operator.REMOVE, predicates, null));
+                        // ts.getAg().changeFilter(filter);
+                        //this.printFilters(filters);
                         return true;
                     } else {
                         System.out.println(
@@ -31,10 +40,17 @@ public class filter extends DefaultInternalAction {
                 if (filter.equals("except") || filter.equals("only") || filter.equals("value")) {
                     if (args[1].isPred() || args[1].isAtom() || args[1].isList()) {
                         if (args.length == 2 && !filter.equals("value")) {
-                            // Term perception = args[1];
+                            ArrayList<String> predicates = new ArrayList<String>();
+                            predicates.add(args[1].toString());                         
+                            filters.add(new Filter(Operator.fromString(filter), predicates, null));
+                            //this.printFilters(filters);
                             return true;
                         } else {
                             if (!args[1].isList() && args[2].isStructure()) {
+                                ArrayList<String> predicates = new ArrayList<String>();
+                                predicates.add(args[1].toString());
+                                filters.add(new Filter(Operator.fromString(args[0].toString()), predicates, args[2]));
+                                //this.printFilters(filters);
                                 return true;
                             } else {
                                 System.out.println(
@@ -57,6 +73,12 @@ public class filter extends DefaultInternalAction {
             return false;
         }
         return false;
+    }
+
+    private void printFilters(ArrayList<Filter> filters) {
+        for (Filter f : filters) {
+            System.out.println(f.toString());
+        }
     }
 
 }
