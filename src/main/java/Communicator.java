@@ -13,7 +13,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 public class Communicator extends AgArch {
 
@@ -47,7 +46,7 @@ public class Communicator extends AgArch {
 
     @Override
     public void instantiateAgents() {
-        if (this.commBridge.getProtocol().equals(TransportAgentMessageType.PREDATOR.getName())) {
+        if (this.commBridge.getProtocol().equals(TransportAgentMessageType.PREDATION.getName())) {
             this.executePredatorProtocol();
         } else if (this.commBridge.getProtocol().equals(TransportAgentMessageType.MUTUALISM.getName())) {
             this.executeMutualismProtocol();

@@ -4,7 +4,7 @@ package jason.architecture;
  * Tipos de protocolo de transferência de agentes entre SMA distintos.
  */
 public enum TransportAgentMessageType {
-    PREDATOR(1, "PREDATOR"),
+    PREDATION(1, "PREDATION"),
     MUTUALISM(2, "MUTUALISM"),
     INQUILINISM(3, "INQUILINISM"),
 

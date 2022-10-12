@@ -282,7 +282,7 @@ public class CommMiddleware implements NodeConnectionListener {
 
             // Após coletar o primeira parâmetro, será possível interpretar a mensagem. Os protocolos de
             // transferência de agentes são tratados da mesma maneira. Já os demais terão uma lógica específica.
-            if (firstParam.equals(TransportAgentMessageType.PREDATOR.getName()) || firstParam.equals(
+            if (firstParam.equals(TransportAgentMessageType.PREDATION.getName()) || firstParam.equals(
                     TransportAgentMessageType.INQUILINISM.getName()) || firstParam.equals(
                     TransportAgentMessageType.MUTUALISM.getName())) {
                 this.protocol = firstParam;
