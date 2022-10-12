@@ -1,12 +1,13 @@
 package jason;
 
 import jason.architecture.AgArch;
-import jason.asSemantics.Agent;
+import jason.asSemantics.*;
 import jason.asSyntax.Literal;
 import jason.asSyntax.Plan;
 
 import java.io.*;
-import java.util.Iterator;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Gerador de arquivo .asl do jason para um agente em tempo de execução.
@@ -104,6 +105,19 @@ public class AslFileGenerator {
         return beliefs.toString();
     }
 
+    private String getIntentionName(Intention intention) {
+        String intentionNameAndImplementation = intention.peek().toString();
+        String[] intentionNameAndImplementationSplit = intentionNameAndImplementation.split("<-");
+        String intentionName = intentionNameAndImplementationSplit[0];
+        intentionName = intentionName.replaceAll("!", "");
+        intentionName = intentionName.replaceAll("\\+", "");
+        intentionName = intentionName.replaceAll("-", "");
+        if (intentionName.contains(" ")) {
+            intentionName = intentionName.replaceAll(" ", "");
+        }
+        return intentionName;
+    }
+
     /**
      * Captura os objetivos iniciais do agente em tempo de execução.
      *
@@ -113,9 +127,49 @@ public class AslFileGenerator {
     private String generateInitialGoals(Agent agent) {
         StringBuilder initialGoals = new StringBuilder();
         initialGoals.append("/* Initial goals */" + NEXT_LINE);
+        List<String> intentionsNames = new LinkedList<>();
 
-        for (Literal literal : agent.getInitialGoals()) {
-            initialGoals.append(INITIAL_GOALS_SYMBOL + literal.getFunctor() + END_SYMBOL + NEXT_LINE);
+        Circumstance circumstance = agent.getTS().getC();
+        Queue<Intention> intentions = circumstance.getIntentions();
+        // recupera as intenções atuais.
+        for (Intention intention : intentions) {
+            String intentionName1 = getIntentionName(intention);
+            if (!intentionsNames.contains(intentionName1)) {
+                intentionsNames.add(intentionName1);
+            }
+        }
+        // recupera a intenção selecionada para ser executada no proximo ciclo.
+        Intention selectedIntention = circumstance.getSelectedIntention();
+        if (selectedIntention != null) {
+            String selectedIntentionName = getIntentionName(selectedIntention);
+            if (!intentionsNames.contains(selectedIntentionName)) {
+                intentionsNames.add(selectedIntentionName);
+            }
+        }
+        // recupera as intenções que estão pendentes para serem executadas em algum momento em ordem.
+        Map<String, Intention> pendingIntentions = circumstance.getPendingIntentions();
+        if (pendingIntentions != null && !pendingIntentions.isEmpty()) {
+            List<Integer> intentionsNumberList = new ArrayList<>();
+            for (String key : pendingIntentions.keySet()) {
+                String[] intentionNumberSplit = key.split("\\/");
+                int intentionNumber = Integer.parseInt(intentionNumberSplit[0]);
+                intentionsNumberList.add(intentionNumber);
+            }
+            intentionsNumberList = intentionsNumberList.stream().sorted().collect(Collectors.toList());
+            for (Integer intentionNumber : intentionsNumberList) {
+                for (String key : pendingIntentions.keySet()) {
+                    if (key.startsWith(intentionNumber+"/")) {
+                        String intentionName = getIntentionName(pendingIntentions.get(key));
+                        if (!intentionsNames.contains(intentionName)) {
+                            intentionsNames.add(intentionName);
+                        }
+                        break;
+                    }
+                }
+            }
+        }
+        for (String intentionsName : intentionsNames) {
+            initialGoals.append(INITIAL_GOALS_SYMBOL + intentionsName + END_SYMBOL + NEXT_LINE);
         }
 
         return initialGoals.toString();
@@ -148,4 +202,5 @@ public class AslFileGenerator {
 
         return plains.toString();
     }
+
 }
