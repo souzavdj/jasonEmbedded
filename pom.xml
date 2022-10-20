@@ -99,7 +99,7 @@
               </descriptorRefs>
               <finalName>jason-embedded</finalName>
               <appendAssemblyId>false</appendAssemblyId>
-              <outputDirectory>../mas-filter-testing/</outputDirectory>
+              <outputDirectory>target</outputDirectory>
             </configuration>
           </execution>
         </executions>
