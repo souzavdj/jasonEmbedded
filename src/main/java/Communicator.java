@@ -131,6 +131,28 @@ public class Communicator extends AgArch {
         }
     }
 
+    //Clonagem begin
+    
+    private void executeClonagemProtocol () {
+        int qtdAgentsInstantiated = 0;
+        for (AslTransferenceModel aslTransferenceModel : this.commBridge.getAgentsReceived()) {
+            String name = aslTransferenceModel.getName();
+            String path = getPath(name);
+            String agArchClass = aslTransferenceModel.getAgentArchClass();
+
+            qtdAgentsInstantiated = this.startAgent(name, path, agArchClass, qtdAgentsInstantiated);
+        }
+        if (qtdAgentsInstantiated == this.commBridge.getAgentsReceived().size()) {
+            // Todos os agentes instanciados, enviando mensagem para deletar da origem (retirar esse deletar!!)
+            //this.commBridge.sendMsgToDeleteAllAgents();
+            // Apagando Variáveis do transporte: verificar se isso é necessario!!!!
+            this.commBridge.cleanAtributesOfTransference();
+            System.out.println("Terminou: " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss.SSS")));
+        }
+    }
+    
+    //Clonagem end
+    
     private String getPath(String agentName) {
         String path = "";
         for (CentralisedAgArch centralisedAgArch : RunCentralisedMAS.getRunner().getAgs().values()) {
