@@ -7,6 +7,7 @@ import jason.asSemantics.DefaultInternalAction;
 import jason.asSemantics.TransitionSystem;
 import jason.asSemantics.Unifier;
 import jason.asSyntax.Term;
+import jason.asSyntax.Literal;
 
 public class act extends DefaultInternalAction {
 
@@ -22,6 +23,10 @@ public class act extends DefaultInternalAction {
         if (ts.getUserAgArch().getArgo().sendCommand(ts.getUserAgArch().getPort(), action.toString())) {
             return true;
         } else {
+            String PORT = ts.getUserAgArch().getPort();
+            String PORTshortNAME=PORT.substring(PORT.lastIndexOf("/")+1);
+            ts.getAg().getBB().remove(Literal.parseLiteral("port("+PORTshortNAME+",on);"));
+            ts.getAg().getBB().add(Literal.parseLiteral("port("+PORTshortNAME+",off);"));
             return false;
         }
     }

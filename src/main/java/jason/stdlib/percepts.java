@@ -38,7 +38,10 @@ public class percepts extends DefaultInternalAction {
         if (args[0].toString().equals("block")) {
             ts.blocked = true;
             return true;
-        } else if (args[0].toString().equals("open")) {
+        } else if (args[0].toString().equals("close")){
+            ts.blocked = true;
+            return true;
+        }else if (args[0].toString().equals("open")) {
             ts.blocked = false;
             return true;
         } else {
