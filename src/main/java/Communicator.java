@@ -52,7 +52,12 @@ public class Communicator extends AgArch {
             this.executeMutualismProtocol();
         } else if (this.commBridge.getProtocol().equals(TransportAgentMessageType.INQUILINISM.getName())) {
             this.executeInquilinismProtocol();
+        } else if (this.commBridge.getProtocol().equals(TransportAgentMessageType.CLONAGEM_SMA.getName())) {
+            this.executeInquilinismProtocol();
+        } else if (this.commBridge.getProtocol().equals(TransportAgentMessageType.CLONAGEM_AGENT.getName())) {
+            this.executeInquilinismProtocol();
         }
+        
     }
 
     private int startAgent(String name, String path, String agArchClasse, int qtdAgentsInstantiated) {
