@@ -24,6 +24,7 @@
 package jason.stdlib;
 
 import jason.JasonException;
+import jason.architecture.TransportAgentMessageType;
 import jason.asSemantics.DefaultInternalAction;
 import jason.asSemantics.Message;
 import jason.asSemantics.TransitionSystem;
@@ -32,6 +33,8 @@ import jason.asSyntax.StringTerm;
 import jason.asSyntax.Term;
 import jason.infra.centralised.CentralisedAgArch;
 import jason.infra.centralised.RunCentralisedMAS;
+import jason.runtime.MASConsoleLogHandler;
+import jason.util.BioInspiredProtocolLogUtils;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -39,6 +42,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * <p>
@@ -162,7 +167,13 @@ public class moveOut extends DefaultInternalAction {
 
     @Override
     protected void checkArguments(Term[] args) throws JasonException {
-        super.checkArguments(args); // check number of arguments
+        // Verifica a quantidade de argumentos.
+        if (args.length < getMinArgs() || args.length > getMaxArgs()) {
+            BioInspiredProtocolLogUtils.LOGGER.log(Level.SEVERE, "Error: The number of arguments passed was ('"
+                    + args.length + "') and must be between "+ getMinArgs() + " and " + getMaxArgs() + "!");
+            throw JasonException.createWrongArgumentNb(this);
+        }
+
         if (!args[0].isAtom() && !args[0].isList() && !args[0].isString()) {
             throw JasonException.createWrongArgument(this,
                     "TO parameter ('" + args[0] + "') must be an atom, a string or a list of receivers!");
@@ -172,6 +183,45 @@ public class moveOut extends DefaultInternalAction {
             throw JasonException.createWrongArgument(this,
                     "illocutionary force parameter ('" + args[1] + "') must be an atom!");
         }
+        // verifica o protocolo passado.
+        String protocol = args[1].toString().toUpperCase().trim();
+        if (!TransportAgentMessageType.PREDATION.getName().equals(protocol) &&
+                !TransportAgentMessageType.INQUILINISM.getName().equals(protocol) &&
+                !TransportAgentMessageType.MUTUALISM.getName().equals(protocol)) {
+            BioInspiredProtocolLogUtils.LOGGER.log(Level.SEVERE, "Error: The bioinspired protocol ('" + args[1]
+                    + "') does not exists!");
+            throw JasonException.createWrongArgument(this,
+                    "The bioinspired protocol ('" + args[1] + "') does not exists!");
+        }
+
+        // Verifica se o protocolo é o Mutualismo para permitir a passagem do 3 argumento.
+        if (args.length == getMaxArgs() && !TransportAgentMessageType.MUTUALISM.getName().equals(protocol)) {
+            BioInspiredProtocolLogUtils.LOGGER.log(Level.SEVERE, "Error: The number of arguments passed was ('"
+                    + args.length + "') with the protocol ('" + args[1] + "') but only the " +
+                    TransportAgentMessageType.MUTUALISM.getName() + " protocol allows to pass " + getMaxArgs() + " args!");
+            throw JasonException.createWrongArgument(this,
+                    "The bioinspired protocol ('" + args[1] + "') does not exists!");
+        }
+
+        // Verifica se existe um agente com o nome passado.
+        String agentName = args[2].toString();
+        List<String> allAgentsName = getAgentsName();
+        if (!allAgentsName.contains(agentName)) {
+            BioInspiredProtocolLogUtils.LOGGER.log(Level.SEVERE, "Error: Does not exists an agent named ('"
+                    + agentName+ "') to be transfer!");
+            throw JasonException.createWrongArgument(this,
+                    "Error: Does not exists an agent named ('" + agentName+ "') to be transfer!");
+        }
+    }
+
+    private List<String> getAgentsName() {
+        Map<String, CentralisedAgArch> agentsOfTheSMA = RunCentralisedMAS.getRunner().getAgs();
+        List<String> nameAgents = new ArrayList<String>();
+
+        for (CentralisedAgArch centralisedAgArch: agentsOfTheSMA.values()) {
+            nameAgents.add(centralisedAgArch.getUserAgArch().getAgName());
+        }
+        return nameAgents;
     }
 
     @Override
@@ -181,13 +231,7 @@ public class moveOut extends DefaultInternalAction {
         String receiver = args[0].toString();
         Term protocol = args[1];
         if (args.length == 2) {
-            Map<String, CentralisedAgArch> agentsOfTheSMA = RunCentralisedMAS.getRunner().getAgs();
-            List<String> nameAgents = new ArrayList<String>();
-
-            for (CentralisedAgArch centralisedAgArch: agentsOfTheSMA.values()) {
-                nameAgents.add(centralisedAgArch.getUserAgArch().getAgName());
-            }
-
+            List<String> nameAgents = getAgentsName();
             ts.getUserAgArch().getCommBridge().sendAllAgentsToContextNet(receiver, protocol, nameAgents);
         } else {
             Term agent = args[2];
