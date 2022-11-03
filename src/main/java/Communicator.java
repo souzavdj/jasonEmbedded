@@ -53,9 +53,9 @@ public class Communicator extends AgArch {
         } else if (this.commBridge.getProtocol().equals(TransportAgentMessageType.INQUILINISM.getName())) {
             this.executeInquilinismProtocol();
         } else if (this.commBridge.getProtocol().equals(TransportAgentMessageType.CLONAGEM_SMA.getName())) {
-            this.executeInquilinismProtocol();
+            this.executeClonagemSmaProtocol();
         } else if (this.commBridge.getProtocol().equals(TransportAgentMessageType.CLONAGEM_AGENT.getName())) {
-            this.executeInquilinismProtocol();
+            this.executeClonagemAgentProtocol();
         }        
     }
 
@@ -137,7 +137,25 @@ public class Communicator extends AgArch {
 
     //Clonagem begin
     
-    private void executeClonagemProtocol () {
+    private void executeClonagemSmaProtocol () {
+        int qtdAgentsInstantiated = 0;
+        for (AslTransferenceModel aslTransferenceModel : this.commBridge.getAgentsReceived()) {
+            String name = aslTransferenceModel.getName();
+            String path = getPath(name);
+            String agArchClass = aslTransferenceModel.getAgentArchClass();
+
+            qtdAgentsInstantiated = this.startAgent(name, path, agArchClass, qtdAgentsInstantiated);
+        }
+        if (qtdAgentsInstantiated == this.commBridge.getAgentsReceived().size()) {
+            // Todos os agentes instanciados, enviando mensagem para deletar da origem (retirar esse deletar!!)
+            //this.commBridge.sendMsgToDeleteAllAgents();
+            // Apagando Variáveis do transporte: verificar se isso é necessario!!!!
+            this.commBridge.cleanAtributesOfTransference();
+            System.out.println("Terminou: " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss.SSS")));
+        }
+    }
+    
+    private void executeClonagemAgentProtocol () {
         int qtdAgentsInstantiated = 0;
         for (AslTransferenceModel aslTransferenceModel : this.commBridge.getAgentsReceived()) {
             String name = aslTransferenceModel.getName();
