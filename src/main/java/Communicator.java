@@ -6,6 +6,7 @@ import jason.infra.centralised.CentralisedAgArch;
 import jason.infra.centralised.RunCentralisedMAS;
 import jason.mas2j.ClassParameters;
 import jason.runtime.RuntimeServicesInfraTier;
+import jason.util.BioInspiredProtocolLogUtils;
 
 import java.io.File;
 import java.time.LocalDateTime;
@@ -91,7 +92,9 @@ public class Communicator extends AgArch {
             this.killAllAgents();
             // Apagando Variaveis do transporte
             this.commBridge.cleanAtributesOfTransference();
-            System.out.println("Terminou: " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss.SSS")));
+            BioInspiredProtocolLogUtils.LOGGER.info("The " + TransportAgentMessageType.PREDATION.getName()
+                    + " protocol has finished instantiating all agents at " + LocalDateTime.now().format(
+                            DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss.SSS")));
         }
     }
 
@@ -109,7 +112,9 @@ public class Communicator extends AgArch {
             this.commBridge.sendMsgToDeleteAllAgents();
             // Apagando Variáveis do transporte
             this.commBridge.cleanAtributesOfTransference();
-            System.out.println("Terminou: " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss.SSS")));
+            BioInspiredProtocolLogUtils.LOGGER.info("The " + TransportAgentMessageType.MUTUALISM.getName()
+                    + " protocol has finished instantiating all agents at " + LocalDateTime.now().format(
+                    DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss.SSS")));
         }
     }
 
@@ -127,7 +132,9 @@ public class Communicator extends AgArch {
             this.commBridge.sendMsgToDeleteAllAgents();
             // Apagando Variáveis do transporte
             this.commBridge.cleanAtributesOfTransference();
-            System.out.println("Terminou: " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss.SSS")));
+            BioInspiredProtocolLogUtils.LOGGER.info("The " + TransportAgentMessageType.INQUILINISM.getName()
+                    + " protocol has finished instantiating all agents at " + LocalDateTime.now().format(
+                    DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss.SSS")));
         }
     }
 

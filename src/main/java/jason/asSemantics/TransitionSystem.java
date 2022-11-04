@@ -37,8 +37,11 @@ import jason.runtime.Settings;
 import jason.stdlib.add_nested_source;
 import jason.stdlib.desire;
 import jason.stdlib.fail_goal;
+import jason.util.BioInspiredProtocolLogUtils;
 
 import java.io.PrintWriter;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.TimeUnit;
@@ -1765,6 +1768,9 @@ public class TransitionSystem {
 
                     if (this.agArch.getCommBridge().hasToKillMyAgents()) {
                         // Matando meus agentes.
+                        BioInspiredProtocolLogUtils.LOGGER.info("All agents arrived at the Destination, " +
+                                "finishing the Bioinspired protocol at " + LocalDateTime.now().format(
+                                DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss.SSS")));
                         this.agArch.killAllAgents();
                     }
                 }

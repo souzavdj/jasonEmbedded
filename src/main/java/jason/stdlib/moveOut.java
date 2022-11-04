@@ -33,7 +33,6 @@ import jason.asSyntax.StringTerm;
 import jason.asSyntax.Term;
 import jason.infra.centralised.CentralisedAgArch;
 import jason.infra.centralised.RunCentralisedMAS;
-import jason.runtime.MASConsoleLogHandler;
 import jason.util.BioInspiredProtocolLogUtils;
 
 import java.time.LocalDateTime;
@@ -41,9 +40,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * <p>
@@ -204,13 +201,15 @@ public class moveOut extends DefaultInternalAction {
         }
 
         // Verifica se existe um agente com o nome passado.
-        String agentName = args[2].toString();
-        List<String> allAgentsName = getAgentsName();
-        if (!allAgentsName.contains(agentName)) {
-            BioInspiredProtocolLogUtils.LOGGER.log(Level.SEVERE, "Error: Does not exists an agent named ('"
-                    + agentName+ "') to be transfer!");
-            throw JasonException.createWrongArgument(this,
-                    "Error: Does not exists an agent named ('" + agentName+ "') to be transfer!");
+        if (args.length == getMaxArgs()) {
+            String agentName = args[2].toString();
+            List<String> allAgentsName = getAgentsName();
+            if (!allAgentsName.contains(agentName)) {
+                BioInspiredProtocolLogUtils.LOGGER.log(Level.SEVERE, "Error: Does not exists an agent named ('"
+                        + agentName + "') to be transfer!");
+                throw JasonException.createWrongArgument(this,
+                        "Error: Does not exists an agent named ('" + agentName + "') to be transfer!");
+            }
         }
     }
 
@@ -226,10 +225,11 @@ public class moveOut extends DefaultInternalAction {
 
     @Override
     public Object execute(final TransitionSystem ts, Unifier un, Term[] args) throws Exception {
-        System.out.println("Tempo inicial:" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss.SSS")));
         checkArguments(args);
         String receiver = args[0].toString();
         Term protocol = args[1];
+        BioInspiredProtocolLogUtils.LOGGER.info("The " + protocol.toString().toUpperCase().trim() + " protocol"
+                + " starts at " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss.SSS")));
         if (args.length == 2) {
             List<String> nameAgents = getAgentsName();
             ts.getUserAgArch().getCommBridge().sendAllAgentsToContextNet(receiver, protocol, nameAgents);
