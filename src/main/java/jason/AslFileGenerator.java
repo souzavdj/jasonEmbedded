@@ -42,6 +42,24 @@ public class AslFileGenerator {
     private static final String KQML_PREFIX = "@kqml";
 
     /**
+     * Gera o conteúdo de um arquivo asl sem as intenções do agente e encapsula no modelo serializável para ser
+     * transferido via contextNet.
+     *
+     * @return Modelo de transferência de agente.
+     */
+    public AslTransferenceModel generateAslContentWithoutIntentions(AgArch agArch) {
+        Agent agent = agArch.getTS().getAg();
+
+        StringBuilder content = new StringBuilder();
+        content.append(generateInitialBeliefs(agent) + NEXT_LINE);
+        content.append(generatePlans(agent) + NEXT_LINE);
+
+        AslTransferenceModel aslTransferenceModel = new AslTransferenceModel(agArch.getAgName(),
+                content.toString().getBytes(), agArch.getClass().getName());
+        return aslTransferenceModel;
+    }
+
+    /**
      * Gera o conteúdo de um arquivo asl e encapsula no modelo serializável para ser transferido via contextNet.
      *
      * @return Modelo de transferência de agente.

@@ -79,6 +79,10 @@ public class CommMiddleware implements NodeConnectionListener {
         return this.protocol;
     }
 
+    public void setProtocol(String protocol) {
+        this.protocol = protocol;
+    }
+
     public UUID getSenderUUID() {
         return this.senderUUID;
     }
@@ -152,8 +156,15 @@ public class CommMiddleware implements NodeConnectionListener {
                 for (CentralisedAgArch centralisedAgArch : agentsOfTheSMA.values()) {
                     if (this.nameAgents.contains(centralisedAgArch.getAgName())) {
                         AslFileGenerator aslFileGenerator = new AslFileGenerator();
-                        AslTransferenceModel aslTransferenceModel = aslFileGenerator.generateAslContent(
-                                centralisedAgArch.getUserAgArch());
+                        AslTransferenceModel aslTransferenceModel;
+                        if (TransportAgentMessageType.INQUILINISM.getName().equalsIgnoreCase(this.getProtocol())) {
+                            aslTransferenceModel = aslFileGenerator.generateAslContentWithoutIntentions(
+                                    centralisedAgArch.getUserAgArch());
+                        } else {
+                            aslTransferenceModel = aslFileGenerator.generateAslContent(
+                                    centralisedAgArch.getUserAgArch());
+                        }
+
                         aslTransferenceModelList.add(aslTransferenceModel);
                         qtdAgents++;
                     }

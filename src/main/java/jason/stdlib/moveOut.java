@@ -230,6 +230,7 @@ public class moveOut extends DefaultInternalAction {
         Term protocol = args[1];
         BioInspiredProtocolLogUtils.LOGGER.info("The " + protocol.toString().toUpperCase().trim() + " protocol"
                 + " starts at " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss.SSS")));
+        ts.getUserAgArch().getCommBridge().setProtocol(protocol.toString().toUpperCase().trim());
         if (args.length == 2) {
             List<String> nameAgents = getAgentsName();
             ts.getUserAgArch().getCommBridge().sendAllAgentsToContextNet(receiver, protocol, nameAgents);
