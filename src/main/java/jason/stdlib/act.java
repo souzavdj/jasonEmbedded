@@ -25,6 +25,9 @@ public class act extends DefaultInternalAction {
         } else {
             String PORT = ts.getUserAgArch().getPort();
             String PORTshortNAME=PORT.substring(PORT.lastIndexOf("/")+1);
+            if(PORTshortNAME==""){
+                PORTshortNAME="unknown";
+            }
             ts.getAg().getBB().remove(Literal.parseLiteral("port("+PORTshortNAME+",on);"));
             ts.getAg().getBB().add(Literal.parseLiteral("port("+PORTshortNAME+",off);"));
             return false;
