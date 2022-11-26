@@ -62,6 +62,8 @@ public class AgArch implements AgArchInfraTier, Comparable<AgArch> {
     private String port = "";
     //***
 
+    private boolean hasToConnectAutomatically = false;
+
     private TransitionSystem ts = null;
 
     public String getPort() {
@@ -70,6 +72,14 @@ public class AgArch implements AgArchInfraTier, Comparable<AgArch> {
 
     public void setPort(String port) {
         this.port = port;
+    }
+
+    public boolean isHasToConnectAutomatically() {
+        return hasToConnectAutomatically;
+    }
+
+    public void setHasToConnectAutomatically(boolean hasToConnectAutomatically) {
+        this.hasToConnectAutomatically = hasToConnectAutomatically;
     }
 
     /**
@@ -366,5 +376,7 @@ public class AgArch implements AgArchInfraTier, Comparable<AgArch> {
     public void connectCN(String gatewayIP, int gatewayPort, String myUUID) {}
 
     public void disconnectCN() {}
+
+    public void connectAutomatically() {}
 
 }

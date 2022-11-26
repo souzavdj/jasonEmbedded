@@ -2,15 +2,15 @@ import jason.AslTransferenceModel;
 import jason.architecture.AgArch;
 import jason.architecture.CommMiddleware;
 import jason.architecture.TransportAgentMessageType;
+import jason.asSemantics.Agent;
+import jason.bb.BeliefBase;
 import jason.infra.centralised.CentralisedAgArch;
 import jason.infra.centralised.RunCentralisedMAS;
 import jason.mas2j.ClassParameters;
 import jason.runtime.RuntimeServicesInfraTier;
-import jason.util.BioInspiredProtocolLogUtils;
+import jason.util.BeliefUtils;
 
 import java.io.File;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -19,18 +19,26 @@ public class Communicator extends AgArch {
 
     private CommMiddleware commBridge = null;
 
+    private boolean connected = false;
+
     private static final String AGENT_FILE_EXTENSION = ".asl";
+
+    public boolean isConnected() {
+        return connected;
+    }
 
     @Override
     public void connectCN(String gatewayIP, int gatewayPort, String myUUID) {
         this.commBridge = new CommMiddleware(gatewayIP, gatewayPort, myUUID);
         this.commBridge.setAgName(this.getAgName());
+        this.connected = true;
     }
 
     @Override
     public void disconnectCN() {
         if (this.commBridge != null) {
             this.commBridge.disconnect();
+            this.connected = false;
         }
     }
 
@@ -83,6 +91,10 @@ public class Communicator extends AgArch {
             String path = getPath(name);
             String agArchClass = aslTransferenceModel.getAgentArchClass();
 
+            if (agArchClass.equals(Communicator.class.getName())) {
+                this.commBridge.setHasCommunicatorAgentTransferred(true);
+            }
+
             qtdAgentsInstantiated = this.startAgent(name, path, agArchClass, qtdAgentsInstantiated);
         }
 
@@ -90,11 +102,6 @@ public class Communicator extends AgArch {
             // Todos os agentes instanciados, enviando mensagem para deletar da origem
             this.commBridge.sendMsgToDeleteAllAgents();
             this.killAllAgents();
-            // Apagando Variaveis do transporte
-            this.commBridge.cleanAtributesOfTransference();
-            BioInspiredProtocolLogUtils.LOGGER.info("The " + TransportAgentMessageType.PREDATION.getName()
-                    + " protocol has finished instantiating all agents at " + LocalDateTime.now().format(
-                            DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss.SSS")));
         }
     }
 
@@ -105,16 +112,15 @@ public class Communicator extends AgArch {
             String path = getPath(name);
             String agArchClass = aslTransferenceModel.getAgentArchClass();
 
+            if (agArchClass.equals(Communicator.class.getName())) {
+                this.commBridge.setHasCommunicatorAgentTransferred(true);
+            }
+
             qtdAgentsInstantiated = this.startAgent(name, path, agArchClass, qtdAgentsInstantiated);
         }
         if (qtdAgentsInstantiated == this.commBridge.getAgentsReceived().size()) {
             // Todos os agentes instanciados, enviando mensagem para deletar da origem
             this.commBridge.sendMsgToDeleteAllAgents();
-            // Apagando Variáveis do transporte
-            this.commBridge.cleanAtributesOfTransference();
-            BioInspiredProtocolLogUtils.LOGGER.info("The " + TransportAgentMessageType.MUTUALISM.getName()
-                    + " protocol has finished instantiating all agents at " + LocalDateTime.now().format(
-                    DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss.SSS")));
         }
     }
 
@@ -125,16 +131,15 @@ public class Communicator extends AgArch {
             String path = getPath(name);
             String agArchClass = aslTransferenceModel.getAgentArchClass();
 
+            if (agArchClass.equals(Communicator.class.getName())) {
+                this.commBridge.setHasCommunicatorAgentTransferred(true);
+            }
+
             qtdAgentsInstantiated = this.startAgent(name, path, agArchClass, qtdAgentsInstantiated);
         }
         if (qtdAgentsInstantiated == this.commBridge.getAgentsReceived().size()) {
             // Todos os agentes instanciados, enviando mensagem para deletar da origem
             this.commBridge.sendMsgToDeleteAllAgents();
-            // Apagando Variáveis do transporte
-            this.commBridge.cleanAtributesOfTransference();
-            BioInspiredProtocolLogUtils.LOGGER.info("The " + TransportAgentMessageType.INQUILINISM.getName()
-                    + " protocol has finished instantiating all agents at " + LocalDateTime.now().format(
-                    DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss.SSS")));
         }
     }
 
@@ -169,7 +174,29 @@ public class Communicator extends AgArch {
                             this.getTS().getUserAgArch().getAgName());
                 }
             }
-            this.commBridge.cleanAtributesOfTransference();
+        }
+    }
+
+    @Override
+    public void connectAutomatically() {
+        if (this.getCommBridge() == null || !this.isConnected()) {
+            Agent communicatorAgent = this.getTS().getAg();
+            List<String> serverAddressBeliefList = BeliefUtils.getBeliefByStartWith(communicatorAgent.getBB(),
+                    BeliefUtils.SERVER_ADDRESS_BELIEF_PREFIX);
+            List<String> serverPortBeliefList = BeliefUtils.getBeliefByStartWith(communicatorAgent.getBB(),
+                    BeliefUtils.SERVER_PORT_BELIEF_PREFIX);
+            List<String> myUUIDBeliefList = BeliefUtils.getBeliefByStartWith(communicatorAgent.getBB(),
+                    BeliefUtils.MY_UUID_BELIEF_PREFIX);
+            String sourceSelf = BeliefBase.TSelf.toString();
+            String serverAddress = BeliefUtils.getBeliefValue(serverAddressBeliefList,
+                    sourceSelf);
+            serverAddress = serverAddress.replaceAll("\"", "");
+            String serverPort = BeliefUtils.getBeliefValue(serverPortBeliefList,
+                    sourceSelf);
+            String myUUID = BeliefUtils.getBeliefValue(myUUIDBeliefList,
+                    sourceSelf);
+            myUUID = myUUID.replaceAll("\"", "");
+            this.connectCN(serverAddress, Integer.parseInt(serverPort), myUUID);
         }
     }
 }

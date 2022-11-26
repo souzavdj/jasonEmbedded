@@ -5,6 +5,7 @@ import jason.AslTransferenceModel;
 import jason.asSyntax.Term;
 import jason.infra.centralised.CentralisedAgArch;
 import jason.infra.centralised.RunCentralisedMAS;
+import jason.util.BioInspiredProtocolLogUtils;
 import lac.cnclib.net.NodeConnection;
 import lac.cnclib.net.NodeConnectionListener;
 import lac.cnclib.net.mrudp.MrUdpNodeConnection;
@@ -15,6 +16,8 @@ import java.io.File;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -42,6 +45,8 @@ public class CommMiddleware implements NodeConnectionListener {
 
     private String myUUID;
 
+    private boolean hasCommunicatorAgentTransferred = false;
+
     private static final String EMPTY_VALUE = "";
 
     private static final String AGENT_FILE_EXTENSION = ".asl";
@@ -49,6 +54,8 @@ public class CommMiddleware implements NodeConnectionListener {
     private static final String COMMUNICATOR_PREAMBLE = "fffe";
 
     private static final String COMMUNICATOR_SIZE_MESSAGE_DEFINITION = "ss";
+
+    private static final String COMMUNICATOR_ARCH_CLASS_NAME = "Communicator";
 
     public CommMiddleware(String gatewayIP, int gatewayPort, String myUUID) {
         this.myUUID = myUUID;
@@ -95,6 +102,14 @@ public class CommMiddleware implements NodeConnectionListener {
         return this.myUUID;
     }
 
+    public void setHasCommunicatorAgentTransferred(boolean hasCommunicatorAgentTransferred) {
+        this.hasCommunicatorAgentTransferred = hasCommunicatorAgentTransferred;
+    }
+
+    public boolean getHasCommunicatorAgentTransferred() {
+        return hasCommunicatorAgentTransferred;
+    }
+
     public void connected(NodeConnection arg0) {
         ApplicationMessage message = new ApplicationMessage();
         message.setContentObject("Registering");
@@ -134,7 +149,6 @@ public class CommMiddleware implements NodeConnectionListener {
     public void newMessageReceived(NodeConnection remoteCon, Message message) {
         if (message.getContentObject() instanceof String) {
             this.extractMessageFromContextNet(message.getContentObject().toString().toCharArray());
-
             // Verifica se há algo relacionado à transferência de agentes para responder a quem enviou a solicitação
             // de transferência de agentes.
             if (this.answerToSendAboutTransfer != null && !this.answerToSendAboutTransfer.equals(EMPTY_VALUE)
@@ -196,6 +210,26 @@ public class CommMiddleware implements NodeConnectionListener {
                         this.deleteFileAsl(file);
                     }
                 }
+                this.answerToSendAboutTransfer = TransportAgentMessageType.KILLED.getName();
+            }
+            if (this.replySentAboutTransfer != null && !this.replySentAboutTransfer.equals(EMPTY_VALUE)
+                    && this.replySentAboutTransfer.equals(TransportAgentMessageType.KILLED.getName())) {
+                if (this.hasCommunicatorAgentTransferred) {
+                    Map<String, CentralisedAgArch> agentsOfTheSMA = RunCentralisedMAS.getRunner().getAgs();
+                    if (agentsOfTheSMA != null && !agentsOfTheSMA.isEmpty()) {
+                        for (CentralisedAgArch centralisedAgArch: agentsOfTheSMA.values()) {
+                            AgArch userAgArch = centralisedAgArch.getUserAgArch();
+                            String arch = userAgArch.getClass().getName();
+                            if (arch.equals(COMMUNICATOR_ARCH_CLASS_NAME)) {
+                                userAgArch.setHasToConnectAutomatically(true);
+                            }
+                        }
+                    }
+                }
+                BioInspiredProtocolLogUtils.LOGGER.info("The " + this.protocol
+                        + " protocol has finished instantiating all agents at " + LocalDateTime.now().format(
+                        DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss.SSS")));
+                cleanAtributesOfTransference();
             }
         } else if (message.getContentObject() instanceof ArrayList) {
             // Recebi os agentes
@@ -275,7 +309,6 @@ public class CommMiddleware implements NodeConnectionListener {
         this.answerToSendAboutTransfer = "";
         this.replySentAboutTransfer = "";
         this.nameAgents = new ArrayList<String>();
-        this.protocol = "";
         this.senderUUID = null;
     }
 
@@ -298,8 +331,9 @@ public class CommMiddleware implements NodeConnectionListener {
                     TransportAgentMessageType.MUTUALISM.getName())) {
                 this.protocol = firstParam;
                 treatAgentTransferenceMsg(message);
-            } else if (firstParam.equals(TransportAgentMessageType.CAN_TRANSFER.getName()) || firstParam.equals(
-                    TransportAgentMessageType.CAN_KILL.getName())) {
+            } else if (firstParam.equals(TransportAgentMessageType.CAN_TRANSFER.getName()) ||
+                    firstParam.equals(TransportAgentMessageType.CAN_KILL.getName()) ||
+                    firstParam.equals(TransportAgentMessageType.KILLED.getName())) {
                 this.replySentAboutTransfer = firstParam;
             } else {
                 treatSendOutMessage(firstParam, message);
@@ -390,7 +424,8 @@ public class CommMiddleware implements NodeConnectionListener {
         this.nameAgents = new ArrayList<String>();
         this.nameAgents.addAll(nameAgents);
         message.setContentObject(this.prepareToSend(protocol.toString().toUpperCase().trim(), nameAgents));
-        message.setRecipientID(UUID.fromString(receiver.substring(1, receiver.length() - 1)));
+        this.senderUUID = UUID.fromString(receiver.substring(1, receiver.length() - 1));
+        message.setRecipientID(this.senderUUID);
         try {
             this.connection.sendMessage(message);
         } catch (IOException e) {
@@ -404,7 +439,8 @@ public class CommMiddleware implements NodeConnectionListener {
         this.nameAgents = new ArrayList<String>();
         this.nameAgents.add(agent.toString());
         message.setContentObject(this.prepareToSend(protocol.toString().toUpperCase().trim(), agent.toString()));
-        message.setRecipientID(UUID.fromString(receiver.substring(1, receiver.length() - 1)));
+        this.senderUUID = UUID.fromString(receiver.substring(1, receiver.length() - 1));
+        message.setRecipientID(this.senderUUID);
         try {
             this.connection.sendMessage(message);
         } catch (IOException e) {
@@ -413,6 +449,18 @@ public class CommMiddleware implements NodeConnectionListener {
     }
 
     public void sendMsgToDeleteAllAgents() {
+        ApplicationMessage appMessage = new ApplicationMessage();
+        appMessage.setContentObject(this.prepareToSend(this.answerToSendAboutTransfer));
+        appMessage.setRecipientID(this.senderUUID);
+        try {
+            this.connection.sendMessage(appMessage);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void sendMsgThatAgentsWasKilled() {
+        this.answerToSendAboutTransfer = TransportAgentMessageType.KILLED.getName();
         ApplicationMessage appMessage = new ApplicationMessage();
         appMessage.setContentObject(this.prepareToSend(this.answerToSendAboutTransfer));
         appMessage.setRecipientID(this.senderUUID);

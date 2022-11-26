@@ -27,6 +27,7 @@ import jason.JasonException;
 import jason.NoValueException;
 import jason.RevisionFailedException;
 import jason.architecture.AgArch;
+import jason.architecture.TransportAgentMessageType;
 import jason.asSyntax.*;
 import jason.asSyntax.PlanBody.BodyType;
 import jason.asSyntax.Trigger.TEOperator;
@@ -1768,11 +1769,27 @@ public class TransitionSystem {
 
                     if (this.agArch.getCommBridge().hasToKillMyAgents()) {
                         // Matando meus agentes.
+                        this.agArch.getCommBridge().sendMsgThatAgentsWasKilled();
+                        this.agArch.killAllAgents();
                         BioInspiredProtocolLogUtils.LOGGER.info("All agents arrived at the Destination, " +
                                 "finishing the Bioinspired protocol at " + LocalDateTime.now().format(
                                 DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss.SSS")));
-                        this.agArch.killAllAgents();
+
+                        if (TransportAgentMessageType.PREDATION.getName().equalsIgnoreCase(
+                                this.agArch.getCommBridge().getProtocol()) ||
+                                TransportAgentMessageType.INQUILINISM.getName().equalsIgnoreCase(
+                                        this.agArch.getCommBridge().getProtocol())) {
+                            this.agArch.getRuntimeServices().stopMAS();
+                        } else {
+                            this.agArch.getCommBridge().cleanAtributesOfTransference();
+                        }
+                        //this.agArch.getRuntimeServices().stopMAS();
                     }
+                }
+
+                if (this.agArch.isHasToConnectAutomatically()) {
+                    this.agArch.connectAutomatically();
+                    this.agArch.setHasToConnectAutomatically(false);
                 }
             }
             nrcslbr++; // counting number of cycles since last belief revision
