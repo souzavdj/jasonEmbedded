@@ -55,7 +55,7 @@ public class CommMiddleware implements NodeConnectionListener {
 
     private static final String COMMUNICATOR_SIZE_MESSAGE_DEFINITION = "ss";
 
-    private static final String COMMUNICATOR_ARCH_CLASS_NAME = "Communicator";
+    public static final String COMMUNICATOR_ARCH_CLASS_NAME = "Communicator";
 
     public CommMiddleware(String gatewayIP, int gatewayPort, String myUUID) {
         this.myUUID = myUUID;

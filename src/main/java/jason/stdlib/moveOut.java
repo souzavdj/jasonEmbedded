@@ -24,6 +24,8 @@
 package jason.stdlib;
 
 import jason.JasonException;
+import jason.architecture.AgArch;
+import jason.architecture.CommMiddleware;
 import jason.architecture.TransportAgentMessageType;
 import jason.asSemantics.DefaultInternalAction;
 import jason.asSemantics.Message;
@@ -203,7 +205,7 @@ public class moveOut extends DefaultInternalAction {
         // Verifica se existe um agente com o nome passado.
         if (args.length == getMaxArgs()) {
             String agentName = args[2].toString();
-            List<String> allAgentsName = getAgentsName();
+            List<String> allAgentsName = getAllAgentsName();
             if (!allAgentsName.contains(agentName)) {
                 BioInspiredProtocolLogUtils.LOGGER.log(Level.SEVERE, "Error: Does not exists an agent named ('"
                         + agentName + "') to be transfer!");
@@ -213,7 +215,7 @@ public class moveOut extends DefaultInternalAction {
         }
     }
 
-    private List<String> getAgentsName() {
+    private List<String> getAllAgentsName() {
         Map<String, CentralisedAgArch> agentsOfTheSMA = RunCentralisedMAS.getRunner().getAgs();
         List<String> nameAgents = new ArrayList<String>();
 
@@ -223,16 +225,36 @@ public class moveOut extends DefaultInternalAction {
         return nameAgents;
     }
 
+    private List<String> getAgentsNameExceptCommunicatorAgentName() {
+        Map<String, CentralisedAgArch> agentsOfTheSMA = RunCentralisedMAS.getRunner().getAgs();
+        List<String> nameAgents = new ArrayList<String>();
+
+        for (CentralisedAgArch centralisedAgArch: agentsOfTheSMA.values()) {
+            AgArch userAgArch = centralisedAgArch.getUserAgArch();
+            String arch = userAgArch.getClass().getName();
+            if (!arch.equals(CommMiddleware.COMMUNICATOR_ARCH_CLASS_NAME)) {
+                nameAgents.add(centralisedAgArch.getUserAgArch().getAgName());
+            }
+        }
+        return nameAgents;
+    }
+
     @Override
     public Object execute(final TransitionSystem ts, Unifier un, Term[] args) throws Exception {
         checkArguments(args);
         String receiver = args[0].toString();
         Term protocol = args[1];
-        BioInspiredProtocolLogUtils.LOGGER.info("The " + protocol.toString().toUpperCase().trim() + " protocol"
+        String protocolName = protocol.toString().toUpperCase().trim();
+        BioInspiredProtocolLogUtils.LOGGER.info("The " + protocolName + " protocol"
                 + " starts at " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss.SSS")));
         ts.getUserAgArch().getCommBridge().setProtocol(protocol.toString().toUpperCase().trim());
         if (args.length == 2) {
-            List<String> nameAgents = getAgentsName();
+            List<String> nameAgents;
+            if (TransportAgentMessageType.MUTUALISM.getName().equals(protocolName)){
+                nameAgents = getAgentsNameExceptCommunicatorAgentName();
+            } else {
+                nameAgents = getAllAgentsName();
+            }
             ts.getUserAgArch().getCommBridge().sendAllAgentsToContextNet(receiver, protocol, nameAgents);
         } else {
             Term agent = args[2];
