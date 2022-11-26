@@ -260,7 +260,22 @@ public class CommMiddleware implements NodeConnectionListener {
             } else {
                 System.out.println("Qtd: " + qtdAgentsReceived + "\tQtdNames: " + this.nameAgents.size());
             }
-        } else {
+        } else if (message.getContentObject() instanceof jason.asSemantics.Message) {
+            Map<String, CentralisedAgArch> agentsOfTheSMA = RunCentralisedMAS.getRunner().getAgs();
+            if (agentsOfTheSMA != null && !agentsOfTheSMA.isEmpty()) {
+                for (CentralisedAgArch centralisedAgArch: agentsOfTheSMA.values()) {
+                    AgArch userAgArch = centralisedAgArch.getUserAgArch();
+                    String arch = userAgArch.getClass().getName();
+                    if (arch.equals(COMMUNICATOR_ARCH_CLASS_NAME)) {
+                        jason.asSemantics.Message contentObject = (jason.asSemantics.Message) message.getContentObject();
+                        contentObject.setReceiver(userAgArch.getAgName());
+                        centralisedAgArch.receiveMsg(contentObject);
+                    }
+                }
+            }
+        }
+
+        else {
             System.err.println("Error: Getting the object content in the ContextNet communication");
         }
         //System.out.println("[ARGO]: A Message has arrived: " + message.getContentObject().toString());
@@ -402,6 +417,9 @@ public class CommMiddleware implements NodeConnectionListener {
         jason.asSemantics.Message jasonMsgs = new jason.asSemantics.Message();
         jasonMsgs.setIlForce(force);
         jasonMsgs.setSender(sender);
+        if (msg.startsWith("\"")) {
+            msg = msg.substring(1, msg.length() - 1);
+        }
         jasonMsgs.setPropCont(msg);
         jasonMsgs.setReceiver(this.agName);
         //System.out.println("[ARGO]: The message is: " + jasonMsgs.toString());
@@ -411,6 +429,17 @@ public class CommMiddleware implements NodeConnectionListener {
     public void sendMsgToContextNet(String sender, String receiver, Term force, Term msg) {
         ApplicationMessage message = new ApplicationMessage();
         message.setContentObject(this.prepareToSend(sender, force.toString(), msg.toString()));
+        message.setRecipientID(UUID.fromString(receiver.substring(1, receiver.length() - 1)));
+        try {
+            this.connection.sendMessage(message);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void sendMsgToContextNet(String receiver, jason.asSemantics.Message msg) {
+        ApplicationMessage message = new ApplicationMessage();
+        message.setContentObject(msg);
         message.setRecipientID(UUID.fromString(receiver.substring(1, receiver.length() - 1)));
         try {
             this.connection.sendMessage(message);
