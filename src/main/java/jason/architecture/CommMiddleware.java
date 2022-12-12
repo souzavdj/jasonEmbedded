@@ -82,6 +82,10 @@ public class CommMiddleware implements NodeConnectionListener {
         return this.agentsReceived;
     }
 
+    public void setAgentsReceived(List<AslTransferenceModel> agentsReceived) {
+        this.agentsReceived = agentsReceived;
+    }
+
     public String getProtocol() {
         return this.protocol;
     }

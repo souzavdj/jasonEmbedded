@@ -125,6 +125,7 @@ public class Communicator extends AgArch {
         if (qtdAgentsInstantiated == this.commBridge.getAgentsReceived().size()) {
             // Todos os agentes instanciados, enviando mensagem para deletar da origem
             this.commBridge.sendMsgToDeleteAllAgents();
+            this.commBridge.setAgentsReceived(new ArrayList<AslTransferenceModel>());
         }
     }
 
@@ -144,6 +145,7 @@ public class Communicator extends AgArch {
         if (qtdAgentsInstantiated == this.commBridge.getAgentsReceived().size()) {
             // Todos os agentes instanciados, enviando mensagem para deletar da origem
             this.commBridge.sendMsgToDeleteAllAgents();
+            this.commBridge.setAgentsReceived(new ArrayList<AslTransferenceModel>());
         }
     }
 
