@@ -6,6 +6,7 @@ import jason.asSemantics.TransitionSystem;
 import jason.asSemantics.Unifier;
 import jason.asSyntax.Literal;
 import jason.asSyntax.Term;
+import jason.infra.centralised.RunCentralisedMAS;
 import jason.util.BeliefUtils;
 import jason.util.BioInspiredProtocolLogUtils;
 
@@ -55,6 +56,11 @@ public class connectCN extends DefaultInternalAction {
                 BeliefUtils.VALUE_REPLACEMENT, String.valueOf(gatewayPort))));
         ts.getAg().addBel(Literal.parseLiteral(BeliefUtils.MY_UUID_BELIEF_VALUE.replace(
                 BeliefUtils.VALUE_REPLACEMENT, uuid)));
+        String masName = RunCentralisedMAS.getRunner().getProject().getSocName();
+        Literal myMASBelief = Literal.parseLiteral(BeliefUtils.MY_MAS_BELIEF_VALUE.replace(
+                BeliefUtils.VALUE_REPLACEMENT,
+                masName));
+        ts.getAg().addBel(myMASBelief);
         return true;
     }
 

@@ -1,9 +1,12 @@
 package jason;
 
 import jason.architecture.AgArch;
-import jason.asSemantics.*;
+import jason.asSemantics.Agent;
+import jason.asSemantics.Circumstance;
+import jason.asSemantics.Intention;
 import jason.asSyntax.Literal;
 import jason.asSyntax.Plan;
+import jason.util.BeliefUtils;
 
 import java.io.*;
 import java.util.*;
@@ -131,7 +134,10 @@ public class AslFileGenerator {
 
         while (beliefsIterator.hasNext()) {
             Literal literal = beliefsIterator.next();
-            beliefs.append(literal.toString() + END_SYMBOL + NEXT_LINE);
+            String beliefString = literal.toString();
+            if (!beliefString.startsWith(BeliefUtils.MY_MAS_BELIEF_PREFIX)) {
+                beliefs.append(beliefString + END_SYMBOL + NEXT_LINE);
+            }
         }
 
         return beliefs.toString();

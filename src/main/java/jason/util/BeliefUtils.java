@@ -15,13 +15,19 @@ public class BeliefUtils {
 
     public static final String MY_UUID_BELIEF_PREFIX = "myUUID";
 
+    public static final String MY_MAS_BELIEF_PREFIX = "myMAS";
+
     public static final String VALUE_REPLACEMENT = "#";
 
-    public static String SERVER_ADDRESS_BELIEF_VALUE = SERVER_ADDRESS_BELIEF_PREFIX + "(\""+VALUE_REPLACEMENT+"\")";
+    private static final String BELIEF_VALUE = "(\""+VALUE_REPLACEMENT+"\")";
 
-    public static String SERVER_PORT_BELIEF_VALUE = SERVER_PORT_BELIEF_PREFIX + "("+VALUE_REPLACEMENT+")";
+    public static String SERVER_ADDRESS_BELIEF_VALUE = SERVER_ADDRESS_BELIEF_PREFIX + BELIEF_VALUE;
 
-    public static String MY_UUID_BELIEF_VALUE = MY_UUID_BELIEF_PREFIX + "(\""+VALUE_REPLACEMENT+"\")";
+    public static String SERVER_PORT_BELIEF_VALUE = SERVER_PORT_BELIEF_PREFIX + BELIEF_VALUE;
+
+    public static String MY_UUID_BELIEF_VALUE = MY_UUID_BELIEF_PREFIX + BELIEF_VALUE;
+
+    public static String MY_MAS_BELIEF_VALUE = MY_MAS_BELIEF_PREFIX + BELIEF_VALUE;
 
     public static List<String> getBeliefByStartWith(BeliefBase beliefBase, String startAt) {
         List<String> beliefs = new ArrayList<>();
