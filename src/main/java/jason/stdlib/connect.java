@@ -12,7 +12,7 @@ import jason.util.BioInspiredProtocolLogUtils;
 
 import java.util.logging.Level;
 
-public class connectCN extends DefaultInternalAction {
+public class connect extends DefaultInternalAction {
 
     @Override
     public int getMinArgs() {
