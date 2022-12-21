@@ -31,30 +31,6 @@ public class AslFileGenerator {
     /** Símbolo que fica no início das declarações de objetivo. */
     private static final String INITIAL_GOALS_SYMBOL = "!";
 
-    /** Regex para encontrar o início das declarações de planos de adição de intenção. */
-    private static final String INITIAL_INTENTION_ADDITION_PLANS_SYMBOL_REGEX = "]\\s*\\+!";
-
-    /** Símbolo de início das declarações de planos de adição de intenção. */
-    private static final String INITIAL_INTENTION_ADDITION_PLANS_SYMBOL = "+!";
-
-    /** Regex para encontrar o início das declarações de plano contingências para intenções. */
-    private static final String INITIAL_INTENTION_CONTINGENCY_PLANS_SYMBOL_REGEX = "]\\s*-!";
-
-    /** Símbolo de início das declarações de planos contingências para intenções. */
-    private static final String INITIAL_INTENTION_CONTINGENCY_PLANS_SYMBOL = "-!";
-
-    /** Regex para encontrar o início das declarações de planos de adição de crença. */
-    private static final String INITIAL_BELIEF_ADDITION_PLANS_SYMBOL_REGEX = "]\\s*\\+\\s*[a-z]";
-
-    /** Símbolo de início das declarações de planos de adição de crença. */
-    private static final String INITIAL_BELIEF_ADDITION_PLANS_SYMBOL = "+";
-
-    /** Regex para encontrar o início das declarações de plano remoção para crença. */
-    private static final String INITIAL_BELIEF_REMOVAL_PLANS_SYMBOL_REGEX = "]\\s*-\\s*[a-z]";
-
-    /** Símbolo de início das declarações de planos remoção para crença. */
-    private static final String INITIAL_BELIEF_REMOVAL_PLANS_SYMBOL = "-";
-
     /** Texto inicial para localizar planos padrão de kqml. */
     private static final String KQML_PREFIX = "@kqml";
 
@@ -223,48 +199,12 @@ public class AslFileGenerator {
         StringBuilder plains = new StringBuilder();
         plains.append("/* Plans */" + NEXT_LINE);
 
-        for (Plan plan : agent.getPL().getPlans()) {
+        List<Plan> plans = agent.getPL().getPlans();
+
+        for (Plan plan : plans) {
             String p = plan.toASString();
             if (!p.startsWith(KQML_PREFIX)) {
-                String[] intentionAdditionPlanName = p.split(INITIAL_INTENTION_ADDITION_PLANS_SYMBOL_REGEX);
-                if (intentionAdditionPlanName.length > 1) {
-                    plains.append(INITIAL_INTENTION_ADDITION_PLANS_SYMBOL + intentionAdditionPlanName[1] + NEXT_LINE);
-                    continue;
-                }
-
-                String[] intentionContingencyPlanName = p.split(INITIAL_INTENTION_CONTINGENCY_PLANS_SYMBOL_REGEX);
-                if (intentionContingencyPlanName.length > 1) {
-                    plains.append(INITIAL_INTENTION_CONTINGENCY_PLANS_SYMBOL + intentionContingencyPlanName[1] + NEXT_LINE);
-                    continue;
-                }
-
-                String[] beliefAdditionPlanName = p.split(INITIAL_BELIEF_ADDITION_PLANS_SYMBOL_REGEX);
-                if (beliefAdditionPlanName.length > 1) {
-                    Pattern pattern = Pattern.compile(INITIAL_BELIEF_ADDITION_PLANS_SYMBOL_REGEX);
-                    Matcher matcher = pattern.matcher(p);
-                    String firstCharacterRemovedByRegex = "";
-                    if (matcher.find()) {
-                        firstCharacterRemovedByRegex = matcher.group(0);
-                    }
-                    plains.append(INITIAL_BELIEF_ADDITION_PLANS_SYMBOL +
-                            firstCharacterRemovedByRegex.substring(firstCharacterRemovedByRegex.length()-1) +
-                            beliefAdditionPlanName[1] + NEXT_LINE);
-                    continue;
-                }
-
-                String[] beliefRemovalPlanName = p.split(INITIAL_BELIEF_REMOVAL_PLANS_SYMBOL_REGEX);
-                if (beliefRemovalPlanName.length > 1) {
-                    Pattern pattern = Pattern.compile(INITIAL_BELIEF_REMOVAL_PLANS_SYMBOL_REGEX);
-                    Matcher matcher = pattern.matcher(p);
-                    String firstCharacterRemovedByRegex = "";
-                    if (matcher.find()) {
-                        firstCharacterRemovedByRegex = matcher.group(0);
-                    }
-                    plains.append(INITIAL_BELIEF_REMOVAL_PLANS_SYMBOL +
-                            firstCharacterRemovedByRegex.substring(firstCharacterRemovedByRegex.length()-1) +
-                            beliefRemovalPlanName[1] + NEXT_LINE);
-                    continue;
-                }
+                plains.append(p + NEXT_LINE);
             }
         }
 
