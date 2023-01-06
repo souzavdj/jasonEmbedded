@@ -19,4 +19,4 @@ mvn install:install-file -Dfile=../lib/UmlGraph.jar -DgroupId=mastransport.UmlGr
 mvn install:install-file -Dfile=../lib/javino_stable_1.4.1-chonOS.jar -DgroupId=br.pro.turing -DartifactId=javino_stable -Dversion=1.4.1 -Dpackaging=jar -DgeneratePom=true
 mvn install:install-file -Dfile=../lib/contextnet-2.5.jar -DgroupId=br.pucrio.inf.lac -DartifactId=contextnet -Dversion=2.5 -Dpackaging=jar -DgeneratePom=true
 mvn install:install-file -Dfile=../lib/contextnet-2.7.jar -DgroupId=br.pucrio.inf.lac -DartifactId=contextnet -Dversion=2.7 -Dpackaging=jar -DgeneratePom=true
-
+mvn install:install-file -Dfile=../lib/gson-2.10.jar -DgroupId=com.google.code.gson -DartifactId=gson -Dversion=2.10 -Dpackaging=jar -DgeneratePom=true

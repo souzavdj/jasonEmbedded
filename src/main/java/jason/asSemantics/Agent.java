@@ -216,10 +216,13 @@ public class Agent {
                 // Pantoja-03: A verifica��o agora � feita diretamente pelo nome
                 // do agente.
                 if (fileName.startsWith(agName)) {
-                    String tagName = fileName.split("-")[1].split("\\.")[0];
-                    Objective ob = new Objective(tagName);
-                    ob.hashFilter = loadXMLBeliefFilter(fileName);
-                    objectives.put(tagName, ob);
+                    String[] fileNameSplit = fileName.split("-");
+                    if (fileNameSplit.length > 1) {
+                        String tagName = fileNameSplit[1].split("\\.")[0];
+                        Objective ob = new Objective(tagName);
+                        ob.hashFilter = loadXMLBeliefFilter(fileName);
+                        objectives.put(tagName, ob);
+                    }
                 }
             }
         } catch (Exception e) {
