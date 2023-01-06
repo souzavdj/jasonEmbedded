@@ -271,6 +271,7 @@ public class CommMiddleware implements NodeConnectionListener {
                     AgArch userAgArch = centralisedAgArch.getUserAgArch();
                     String arch = userAgArch.getClass().getName();
                     if (arch.equals(COMMUNICATOR_ARCH_CLASS_NAME)) {
+                        this.senderUUID = message.getSenderID();
                         jason.asSemantics.Message contentObject = (jason.asSemantics.Message) message.getContentObject();
                         contentObject.setReceiver(userAgArch.getAgName());
                         centralisedAgArch.receiveMsg(contentObject);

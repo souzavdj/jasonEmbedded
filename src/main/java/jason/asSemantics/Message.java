@@ -54,6 +54,8 @@ public class Message implements Serializable {
 
     public final static String kqmlReceivedFunctor = "kqml_received";
 
+    public final static String kqmlReceivedOutFunctor = "kqml_received_out";
+
     public Message() {
     }
 

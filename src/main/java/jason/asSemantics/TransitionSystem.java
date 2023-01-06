@@ -34,11 +34,14 @@ import jason.asSyntax.Trigger.TEOperator;
 import jason.asSyntax.Trigger.TEType;
 import jason.asSyntax.parser.ParseException;
 import jason.bb.BeliefBase;
+import jason.infra.centralised.RunCentralisedMAS;
 import jason.runtime.Settings;
 import jason.stdlib.add_nested_source;
 import jason.stdlib.desire;
 import jason.stdlib.fail_goal;
 import jason.util.BioInspiredProtocolLogUtils;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import java.io.PrintWriter;
 import java.time.LocalDateTime;
@@ -528,11 +531,18 @@ public class TransitionSystem {
                     }
 
                     if (!added) {
-                        Literal received = new LiteralImpl(Message.kqmlReceivedFunctor).addTerms(new Atom(sender),
-                                new Atom(m.getIlForce()), content, new Atom(m.getMsgId()));
+                        Literal received;
+                        if(RunCentralisedMAS.getRunner().getAg(sender) != null) {
+                             received = new LiteralImpl(Message.kqmlReceivedFunctor).addTerms(new Atom(sender),
+                                    new Atom(m.getIlForce()), content, new Atom(m.getMsgId()));
+                        } else {
+                            received = new LiteralImpl(Message.kqmlReceivedOutFunctor).addTerms(new Atom(sender),
+                                    new Atom(m.getIlForce()), content, new Atom(m.getMsgId()));
+                        }
 
-                        updateEvents(
-                                new Event(new Trigger(TEOperator.add, TEType.achieve, received), Intention.EmptyInt));
+                        Trigger trigger = new Trigger(TEOperator.add, TEType.achieve, received);
+                        Event event = new Event(trigger, Intention.EmptyInt);
+                        updateEvents(event);
                     }
                 } else {
                     logger.fine("Ignoring message " + m + " because it is received after the timeout.");
@@ -1026,7 +1036,13 @@ public class TransitionSystem {
                     InternalAction ia = ((InternalActionLiteral) bTerm).getIA(ag);
                     Term[] terms = ia.prepareArguments(body, u); // clone and apply
                     // args
+                    if (body.getFunctor().equals(".sendOutCN") && im.getPlan().getTrigger().getLiteral().getFunctor().equals(Message.kqmlReceivedOutFunctor)) {
+                        terms[0] = new Atom(this.agArch.getCommBridge().getSenderUUID().toString());
+                    }
                     Object oresult = ia.execute(this, u, terms);
+                    if (body.getFunctor().equals(".sendOutCN") && im.getPlan().getTrigger().getLiteral().getFunctor().equals(Message.kqmlReceivedOutFunctor)) {
+                        this.agArch.getCommBridge().cleanAtributesOfTransference();
+                    }
                     if (oresult != null) {
                         ok = oresult instanceof Boolean && (Boolean) oresult;
                         if (!ok && oresult instanceof Iterator) { // ia result is an

@@ -17,8 +17,22 @@
       not .list(Content) & 
       .add_nested_source(Content, Sender, CA)
    <- +CA.
+
+@kqmlReceivedTellStructureOut
++!kqml_received_out(Sender, tell, Content, _)
+   :  .literal(Content) &
+      .ground(Content) &
+      not .list(Content) &
+      .add_nested_source(Content, Sender, CA)
+   <- +CA.
+
 @kqmlReceivedTellList
 +!kqml_received(Sender, tell, Content, _) 
+   :  .list(Content)
+   <- !add_all_kqml_received(Sender,Content).
+
+@kqmlReceivedTellListOut
++!kqml_received_out(Sender, tell, Content, _)
    :  .list(Content)
    <- !add_all_kqml_received(Sender,Content).
 
@@ -42,6 +56,10 @@
    <- .add_nested_source(Content, Sender, CA); 
       -CA.
 
+@kqmlReceivedUnTellOut
++!kqml_received_out(Sender, untell, Content, _)
+   <- .add_nested_source(Content, Sender, CA);
+      -CA.
 
 /* ---- achieve performatives ---- */ 
 
@@ -49,8 +67,19 @@
 +!kqml_received(Sender, achieve, Content, _)
     : not .list(Content) & .add_nested_source(Content, Sender, CA)
    <- !!CA.
+
+@kqmlReceivedAchieveOut
++!kqml_received_out(Sender, achieve, Content, _)
+    : not .list(Content) & .add_nested_source(Content, Sender, CA)
+   <- !!CA.
+
 @kqmlReceivedAchieveList
 +!kqml_received(Sender, achieve, Content, _)
+    : .list(Content)
+   <- !add_all_kqml_achieve(Sender,Content).
+
+@kqmlReceivedAchieveListOut
++!kqml_received_out(Sender, achieve, Content, _)
     : .list(Content)
    <- !add_all_kqml_achieve(Sender,Content).
 
@@ -69,6 +98,9 @@
 +!kqml_received(_, unachieve, Content, _)
    <- .drop_desire(Content).
 
+@kqmlReceivedUnAchieveOut[atomic]
++!kqml_received_out(_, unachieve, Content, _)
+   <- .drop_desire(Content).
 
 /* ---- ask performatives ---- */ 
 
@@ -77,14 +109,28 @@
    <- ?Content;
       .send(Sender, tell, Content, MsgId).
 
+@kqmlReceivedAskOneOut1
++!kqml_received_out(Sender, askOne, Content, MsgId)
+   <- ?Content;
+      .sendOutCN(Sender, tell, Content, MsgId).
+
 @kqmlReceivedAskOne2 // error in askOne, send untell
 -!kqml_received(Sender, askOne, Content, MsgId)
-   <- .send(Sender, untell, Content, MsgId).      
+   <- .send(Sender, untell, Content, MsgId).
+
+@kqmlReceivedAskOneOut2 // error in askOne, send untell
+-!kqml_received_out(Sender, askOne, Content, MsgId)
+   <- .sendOutCN(Sender, untell, Content, MsgId).
 
 @kqmlReceivedAskAll2
 +!kqml_received(Sender, askAll, Content, MsgId)
    <- .findall(Content, Content, List); 
       .send(Sender, tell, List, MsgId).
+
+@kqmlReceivedAskAllOut2
++!kqml_received_out(Sender, askAll, Content, MsgId)
+   <- .findall(Content, Content, List);
+      .sendOutCN(Sender, tell, List, MsgId).
 
 
 /* ---- know-how performatives ---- */ 
@@ -96,10 +142,18 @@
 +!kqml_received(Sender, tellHow, Content, _)
    <- .add_plan(Content, Sender).
 
+@kqmlReceivedTellHowOut
++!kqml_received_out(Sender, tellHow, Content, _)
+   <- .add_plan(Content, Sender).
+
 // In untellHow, content must be a plan's
 // label (or a list of labels)
 @kqmlReceivedUnTellHow
 +!kqml_received(Sender, untellHow, Content, _)
+   <- .remove_plan(Content, Sender).
+
+@kqmlReceivedUnTellHowOut
++!kqml_received_out(Sender, untellHow, Content, _)
    <- .remove_plan(Content, Sender).
 
 // In askHow, content must be a string representing
@@ -109,8 +163,17 @@
    <- .relevant_plans(Content, ListOfPlans); 
       .send(Sender, tellHow, ListOfPlans, MsgId).
 
+@kqmlReceivedAskHowOut
++!kqml_received_out(Sender, askHow, Content, MsgId)
+   <- .relevant_plans(Content, ListOfPlans);
+      .sendOutCN(Sender, tellHow, ListOfPlans, MsgId).
+
 /* general communication error handler */
 
 @kqmlError 
 -!kqml_received(_Sender, _Per, _Content, _MsgId)[error(EID), error_msg(EMsg)] 
-   <- .print("Communication error -- ",EID, ": ", EMsg).      
+   <- .print("Communication error -- ",EID, ": ", EMsg).
+
+@kqmlErrorOut
+-!kqml_received_out(_Sender, _Per, _Content, _MsgId)[error(EID), error_msg(EMsg)]
+   <- .print("Communication error -- ",EID, ": ", EMsg).
