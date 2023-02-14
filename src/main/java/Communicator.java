@@ -1,11 +1,16 @@
 import jason.AslTransferenceModel;
+import jason.RevisionFailedException;
 import jason.architecture.AgArch;
 import jason.architecture.CommMiddleware;
 import jason.architecture.TransportAgentMessageType;
+import jason.asSemantics.Agent;
+import jason.asSyntax.Literal;
+import jason.bb.BeliefBase;
 import jason.infra.centralised.CentralisedAgArch;
 import jason.infra.centralised.RunCentralisedMAS;
 import jason.mas2j.ClassParameters;
 import jason.runtime.RuntimeServicesInfraTier;
+import jason.util.BeliefUtils;
 import jason.util.BioInspiredProtocolLogUtils;
 
 import java.io.File;
@@ -14,6 +19,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 
 public class Communicator extends AgArch {
 
@@ -68,6 +74,16 @@ public class Communicator extends AgArch {
             RuntimeServicesInfraTier rs = this.getTS().getUserAgArch().getRuntimeServices();
             name = rs.createAgent(name, path, agClass, agArchClasses, bbPars, this.getTS().getSettings());
             rs.startAgent(name);
+            String masName = RunCentralisedMAS.getRunner().getProject().getSocName();
+            Literal myMASBelief = Literal.parseLiteral(BeliefUtils.MY_MAS_BELIEF_VALUE.replace(
+                    BeliefUtils.VALUE_REPLACEMENT,
+                    masName));
+            try {
+                RunCentralisedMAS.getRunner().getAg(name).getTS().getAg().addBel(myMASBelief);
+            } catch (RevisionFailedException e) {
+                BioInspiredProtocolLogUtils.LOGGER.log(Level.SEVERE,
+                        "Error: Tt was not possible to add the belief related to the MAS name: " + e);
+            }
             qtdAgentsInstantiated++;
             return qtdAgentsInstantiated;
         } catch (Exception e) {
