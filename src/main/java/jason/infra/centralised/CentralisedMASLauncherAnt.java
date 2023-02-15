@@ -105,6 +105,8 @@ public class CentralisedMASLauncherAnt implements MASLauncherInfraTier {
     public void stopMAS() {
         try {
             // creating this file will stop the MAS, the runner checks for this file creation
+            System.out.println(project.getDirectory());
+            System.out.println(File.separator);
             File stop = new File(project.getDirectory() + File.separator + RunCentralisedMAS.stopMASFileName);
             stop.createNewFile();
         } catch (Exception e) {

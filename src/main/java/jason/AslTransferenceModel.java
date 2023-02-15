@@ -39,4 +39,8 @@ public class AslTransferenceModel implements Serializable {
     public String getAgentArchClass() {
         return agentArchClass;
     }
+
+    public void setName(String name){
+        this.name =name;
+    }
 }

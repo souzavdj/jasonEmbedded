@@ -123,7 +123,7 @@ public class AslFileGenerator {
      * @param agent Agente.
      * @return Declaração em String das crença do agente em tempo de execução.
      */
-    private String generateInitialBeliefs(Agent agent) {
+    public String generateInitialBeliefs(Agent agent) {
         StringBuilder beliefs = new StringBuilder();
         beliefs.append("/* Initial beliefs and rules */" + NEXT_LINE);
 
@@ -156,7 +156,7 @@ public class AslFileGenerator {
      * @param agent Agente.
      * @return Texto com os objetivos iniciais do agente em tempo de execução.
      */
-    private String generateInitialGoals(Agent agent) {
+    public String generateInitialGoals(Agent agent) {
         StringBuilder initialGoals = new StringBuilder();
         initialGoals.append("/* Initial goals */" + NEXT_LINE);
         List<String> intentionsNames = new LinkedList<>();
@@ -213,7 +213,7 @@ public class AslFileGenerator {
      * @param agent Agente.
      * @return Texto com os planos do agente.
      */
-    private String generatePlans(Agent agent) {
+    public String generatePlans(Agent agent) {
         StringBuilder plains = new StringBuilder();
         plains.append("/* Plans */" + NEXT_LINE);
 

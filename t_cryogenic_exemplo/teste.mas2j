@@ -1,0 +1,13 @@
+MAS teste {
+
+	infrastructure: Centralised
+
+	agents:
+	    agenteComunicador agentArchClass Communicator;
+	    kate;
+	    bob;
+
+
+	 aslSourcePath:
+		"t_cryogenic_exemplo/";
+}

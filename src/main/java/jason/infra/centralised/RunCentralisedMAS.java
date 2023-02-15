@@ -63,9 +63,9 @@ public class RunCentralisedMAS {
 
     public final static String logPropFile = "logging.properties";
 
-    public final static String stopMASFileName = ".stop___MAS";
+    public final static String stopMASFileName = ".stopMAS";
 
-    public final static String defaultProjectFileName = "default.mas2j";
+    public final static String defaultProjectFileName = "src/example/comunicador_remetente.mas2j";
 
     private static Logger logger = Logger.getLogger(RunCentralisedMAS.class.getName());
 

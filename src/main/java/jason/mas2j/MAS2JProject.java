@@ -325,4 +325,5 @@ public class MAS2JProject {
         }
         return infraFac;
     }
+
 }

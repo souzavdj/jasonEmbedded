@@ -2,17 +2,20 @@ package jason.architecture;
 
 import jason.AslFileGenerator;
 import jason.AslTransferenceModel;
+import jason.asSemantics.Agent;
 import jason.asSyntax.Term;
 import jason.infra.centralised.CentralisedAgArch;
+import jason.infra.centralised.CentralisedMASLauncherAnt;
 import jason.infra.centralised.RunCentralisedMAS;
+import jason.mas2j.AgentParameters;
+import jason.mas2j.MAS2JProject;
 import lac.cnclib.net.NodeConnection;
 import lac.cnclib.net.NodeConnectionListener;
 import lac.cnclib.net.mrudp.MrUdpNodeConnection;
 import lac.cnclib.sddl.message.ApplicationMessage;
 import lac.cnclib.sddl.message.Message;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.util.ArrayList;
@@ -510,4 +513,64 @@ public class CommMiddleware implements NodeConnectionListener {
         int converted = x + (y * 16);
         return converted;
     }
+
+    public void cryogenic(){
+        MAS2JProject mas2JProject = RunCentralisedMAS.getRunner().getProject();
+        AslFileGenerator aslFileGenerator = new AslFileGenerator();
+
+        String dir_absoluto ="/home/tielle/Projetos_Pessoais/ultron-protocol/t_cryogenic_exemplo/criogenado";
+        System.out.println("❄ ❄ ❄ Criogenando agentes do SMA: "+ mas2JProject.getSocName()  + "❄ ❄ ❄"+"/n");
+        Map<String, CentralisedAgArch> agentsOfTheSMA = RunCentralisedMAS.getRunner().getAgs();
+
+        // Salvando as ASL dos agentes
+        for (CentralisedAgArch centralisedAgArch : agentsOfTheSMA.values()) {
+            AgArch agArch = centralisedAgArch.getUserAgArch();
+            String arch = agArch.getClass().getName();
+            if(arch.equals("Communicator")){
+
+
+            }
+            AslTransferenceModel asl = aslFileGenerator.generateAslContent(agArch);
+            asl.setName(agArch.getAgName());
+            aslFileGenerator.createAslFile(dir_absoluto,asl);
+        }
+        // salvando o MAS
+        createMAS_File(dir_absoluto, mas2JProject);
+    }
+
+    public void excluirIntençãoCriogeniaAgentCommunicator(){
+
+
+    }
+
+    public void createMAS_File(String path, MAS2JProject mas2JProject) {
+       try {
+         File file = new File(path + "/" + mas2JProject.getSocName() + "." +mas2JProject.EXT);
+         if(!file.exists()){
+             file.createNewFile();
+         }
+        FileWriter fileWriter = new FileWriter(file);
+        BufferedWriter bufferedWriter = new BufferedWriter( fileWriter );
+        bufferedWriter.write("MAS "+mas2JProject.getSocName()+" {"+'\n');
+        bufferedWriter.write("infrastructure: Centralised"+'\n');
+        bufferedWriter.write("agents:"+'\n');
+        List<AgentParameters> listAgentParameters = mas2JProject.getAgents();
+        for(AgentParameters agentParameters: listAgentParameters){
+            bufferedWriter.write(agentParameters.getAsInMASProject()+'\n');
+        }
+        bufferedWriter.write("aslSourcePath:"+'\n');
+        String name_sma = mas2JProject.getSourcePaths().toString();
+        bufferedWriter.write("\""+name_sma.substring(3, name_sma.length()-1)+"\""+";"+'\n');
+        bufferedWriter.write("}");
+        bufferedWriter.close();
+        fileWriter.close();
+
+       } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
 }
