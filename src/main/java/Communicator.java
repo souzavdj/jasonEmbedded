@@ -59,6 +59,8 @@ public class Communicator extends AgArch {
             this.executeMutualismProtocol();
         } else if (this.commBridge.getProtocol().equals(TransportAgentMessageType.INQUILINISM.getName())) {
             this.executeInquilinismProtocol();
+        } else if (this.commBridge.getProtocol().equals(TransportAgentMessageType.CLONING.getName())) {
+            this.executeCloningProtocol();
         }
     }
 
@@ -74,16 +76,6 @@ public class Communicator extends AgArch {
             RuntimeServicesInfraTier rs = this.getTS().getUserAgArch().getRuntimeServices();
             name = rs.createAgent(name, path, agClass, agArchClasses, bbPars, this.getTS().getSettings());
             rs.startAgent(name);
-            String masName = RunCentralisedMAS.getRunner().getProject().getSocName();
-            Literal myMASBelief = Literal.parseLiteral(BeliefUtils.MY_MAS_BELIEF_VALUE.replace(
-                    BeliefUtils.VALUE_REPLACEMENT,
-                    masName));
-            try {
-                RunCentralisedMAS.getRunner().getAg(name).getTS().getAg().addBel(myMASBelief);
-            } catch (RevisionFailedException e) {
-                BioInspiredProtocolLogUtils.LOGGER.log(Level.SEVERE,
-                        "Error: Tt was not possible to add the belief related to the MAS name: " + e);
-            }
             qtdAgentsInstantiated++;
             return qtdAgentsInstantiated;
         } catch (Exception e) {
@@ -149,6 +141,26 @@ public class Communicator extends AgArch {
             // Apagando Variáveis do transporte
             this.commBridge.cleanAtributesOfTransference();
             BioInspiredProtocolLogUtils.LOGGER.info("The " + TransportAgentMessageType.INQUILINISM.getName()
+                    + " protocol has finished instantiating all agents at " + LocalDateTime.now().format(
+                    DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss.SSS")));
+        }
+    }
+
+    private void executeCloningProtocol() {
+        int qtdAgentsInstantiated = 0;
+        for (AslTransferenceModel aslTransferenceModel : this.commBridge.getAgentsReceived()) {
+            String name = aslTransferenceModel.getName();
+            String path = getPath(name);
+            String agArchClass = aslTransferenceModel.getAgentArchClass();
+
+            qtdAgentsInstantiated = this.startAgent(name, path, agArchClass, qtdAgentsInstantiated);
+        }
+        if (qtdAgentsInstantiated == this.commBridge.getAgentsReceived().size()) {
+            // Todos os agentes instanciados, enviando mensagem para deletar da origem
+            this.commBridge.sendMsgToDeleteAllAgents();
+            // Apagando Variáveis do transporte
+            this.commBridge.cleanAtributesOfTransference();
+            BioInspiredProtocolLogUtils.LOGGER.info("The " + TransportAgentMessageType.CLONING.getName()
                     + " protocol has finished instantiating all agents at " + LocalDateTime.now().format(
                     DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss.SSS")));
         }

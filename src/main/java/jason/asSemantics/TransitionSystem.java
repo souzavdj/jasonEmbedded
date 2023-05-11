@@ -27,6 +27,7 @@ import jason.JasonException;
 import jason.NoValueException;
 import jason.RevisionFailedException;
 import jason.architecture.AgArch;
+import jason.architecture.TransportAgentMessageType;
 import jason.asSyntax.*;
 import jason.asSyntax.PlanBody.BodyType;
 import jason.asSyntax.Trigger.TEOperator;
@@ -1771,7 +1772,13 @@ public class TransitionSystem {
                         BioInspiredProtocolLogUtils.LOGGER.info("All agents arrived at the Destination, " +
                                 "finishing the Bioinspired protocol at " + LocalDateTime.now().format(
                                 DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss.SSS")));
-                        this.agArch.killAllAgents();
+                        if (this.agArch.getCommBridge().getProtocol() != null &&
+                                !TransportAgentMessageType.CLONING.getName()
+                                        .equals(this.agArch.getCommBridge().getProtocol())) {
+                            this.agArch.killAllAgents();
+                        } else {
+                            this.agArch.getCommBridge().cleanAtributesOfTransference();
+                        }
                     }
                 }
             }

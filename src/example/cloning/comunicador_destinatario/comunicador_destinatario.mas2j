@@ -1,0 +1,10 @@
+MAS comunicadorDestinatario {
+
+	infrastructure: Centralised
+
+	agents:
+		agente_destinatario agentArchClass Communicator;
+
+	aslSourcePath:
+		"src/example/cloning/comunicador_destinatario/asl";
+}

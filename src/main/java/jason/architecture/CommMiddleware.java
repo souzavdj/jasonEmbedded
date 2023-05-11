@@ -188,12 +188,14 @@ public class CommMiddleware implements NodeConnectionListener {
             if (this.replySentAboutTransfer != null && !this.replySentAboutTransfer.equals(EMPTY_VALUE)
                     && this.replySentAboutTransfer.equals(TransportAgentMessageType.CAN_KILL.getName())) {
                 //Deletar os arquivos ASL
-                Map<String, CentralisedAgArch> agentsOfTheSMA = RunCentralisedMAS.getRunner().getAgs();
-                for (CentralisedAgArch centralisedAgArch : agentsOfTheSMA.values()) {
-                    if (this.nameAgents.contains(centralisedAgArch.getAgName())) {
-                        String path = centralisedAgArch.getTS().getAg().getASLSrc();
-                        File file = new File(path);
-                        this.deleteFileAsl(file);
+                if (this.protocol != null && !TransportAgentMessageType.CLONING.getName().equals(this.protocol)) {
+                    Map<String, CentralisedAgArch> agentsOfTheSMA = RunCentralisedMAS.getRunner().getAgs();
+                    for (CentralisedAgArch centralisedAgArch : agentsOfTheSMA.values()) {
+                        if (this.nameAgents.contains(centralisedAgArch.getAgName())) {
+                            String path = centralisedAgArch.getTS().getAg().getASLSrc();
+                            File file = new File(path);
+                            this.deleteFileAsl(file);
+                        }
                     }
                 }
             }
@@ -295,7 +297,8 @@ public class CommMiddleware implements NodeConnectionListener {
             // transferência de agentes são tratados da mesma maneira. Já os demais terão uma lógica específica.
             if (firstParam.equals(TransportAgentMessageType.PREDATION.getName()) || firstParam.equals(
                     TransportAgentMessageType.INQUILINISM.getName()) || firstParam.equals(
-                    TransportAgentMessageType.MUTUALISM.getName())) {
+                    TransportAgentMessageType.MUTUALISM.getName()) || firstParam.equals(
+                    TransportAgentMessageType.CLONING.getName())) {
                 this.protocol = firstParam;
                 treatAgentTransferenceMsg(message);
             } else if (firstParam.equals(TransportAgentMessageType.CAN_TRANSFER.getName()) || firstParam.equals(

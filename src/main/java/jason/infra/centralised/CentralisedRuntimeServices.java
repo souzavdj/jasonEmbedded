@@ -1,12 +1,16 @@
 package jason.infra.centralised;
 
 import jason.JasonException;
+import jason.RevisionFailedException;
 import jason.architecture.AgArch;
 import jason.asSemantics.Agent;
+import jason.asSyntax.Literal;
 import jason.mas2j.AgentParameters;
 import jason.mas2j.ClassParameters;
 import jason.runtime.RuntimeServicesInfraTier;
 import jason.runtime.Settings;
+import jason.util.BeliefUtils;
+import jason.util.BioInspiredProtocolLogUtils;
 
 import java.util.List;
 import java.util.Set;
@@ -69,6 +73,17 @@ public class CentralisedRuntimeServices implements RuntimeServicesInfraTier {
         Thread agThread = new Thread(agArch);
         agArch.setThread(agThread);
         agThread.start();
+
+        String masName = RunCentralisedMAS.getRunner().getProject().getSocName();
+        Literal myMASBelief = Literal.parseLiteral(BeliefUtils.MY_MAS_BELIEF_VALUE.replace(
+                BeliefUtils.VALUE_REPLACEMENT,
+                masName));
+        try {
+            RunCentralisedMAS.getRunner().getAg(agName).getTS().getAg().addBel(myMASBelief);
+        } catch (RevisionFailedException e) {
+            BioInspiredProtocolLogUtils.LOGGER.log(Level.SEVERE,
+                    "Error: Tt was not possible to add the belief related to the MAS name: " + e);
+        }
     }
 
     public AgArch clone(Agent source, List<String> archClasses, String agName) throws JasonException {

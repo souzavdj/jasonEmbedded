@@ -9,8 +9,8 @@ public enum TransportAgentMessageType {
     INQUILINISM(3, "INQUILINISM"),
 
     CAN_TRANSFER(4, "CAN TRANSFER THE AGENT(S)"),
-    CAN_KILL(5, "CAN KILL THE AGENT(S)");
-
+    CAN_KILL(5, "CAN KILL THE AGENT(S)"),
+    CLONING(6, "CLONING");
     int id;
     String name;
 

@@ -184,7 +184,8 @@ public class moveOut extends DefaultInternalAction {
         String protocol = args[1].toString().toUpperCase().trim();
         if (!TransportAgentMessageType.PREDATION.getName().equals(protocol) &&
                 !TransportAgentMessageType.INQUILINISM.getName().equals(protocol) &&
-                !TransportAgentMessageType.MUTUALISM.getName().equals(protocol)) {
+                !TransportAgentMessageType.MUTUALISM.getName().equals(protocol) &&
+                !TransportAgentMessageType.CLONING.getName().equals(protocol)) {
             BioInspiredProtocolLogUtils.LOGGER.log(Level.SEVERE, "Error: The bioinspired protocol ('" + args[1]
                     + "') does not exists!");
             throw JasonException.createWrongArgument(this,
@@ -192,10 +193,13 @@ public class moveOut extends DefaultInternalAction {
         }
 
         // Verifica se o protocolo é o Mutualismo para permitir a passagem do 3 argumento.
-        if (args.length == getMaxArgs() && !TransportAgentMessageType.MUTUALISM.getName().equals(protocol)) {
+        if (args.length == getMaxArgs() && (!TransportAgentMessageType.MUTUALISM.getName().equals(protocol)
+                && !TransportAgentMessageType.CLONING.getName().equals(protocol))
+        ) {
             BioInspiredProtocolLogUtils.LOGGER.log(Level.SEVERE, "Error: The number of arguments passed was ('"
                     + args.length + "') with the protocol ('" + args[1] + "') but only the " +
-                    TransportAgentMessageType.MUTUALISM.getName() + " protocol allows to pass " + getMaxArgs() + " args!");
+                    TransportAgentMessageType.MUTUALISM.getName() + " and " + TransportAgentMessageType.CLONING.getName()
+                    + " protocol allows to pass " + getMaxArgs() + " args!");
             throw JasonException.createWrongArgument(this,
                     "The bioinspired protocol ('" + args[1] + "') does not exists!");
         }
