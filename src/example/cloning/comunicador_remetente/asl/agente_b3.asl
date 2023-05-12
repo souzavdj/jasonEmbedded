@@ -1,7 +1,7 @@
 // Agente B
 
 /* Initial beliefs and rules */
-
+crencaB.
 /* Initial goals */
 
 !start.
@@ -10,4 +10,5 @@
 
 +!start : true <-
 	.print("Sou o agente B");
-    +crencaB.
+    .wait(500);
+    !start.

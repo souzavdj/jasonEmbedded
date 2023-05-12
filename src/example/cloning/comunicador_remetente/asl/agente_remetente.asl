@@ -15,4 +15,4 @@ souRemetente.
 +!start : true <-
 	.connectCN("192.168.43.3", 5500, "788b2b22-baa6-4c61-b1bb-01cff1f5f879");
 	.print("Sou o remetente e vou enviar uma mensagem ao destinatário.");
-	.moveOut("788b2b22-baa6-4c61-b1bb-01cff1f5f878", predation, agente_a2).
+	.moveOut("788b2b22-baa6-4c61-b1bb-01cff1f5f878", cloning, agente_b3).
