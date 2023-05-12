@@ -1,0 +1,11 @@
+MAS sourceTractor {
+
+	infrastructure: Centralised
+
+	agents:
+	    hardwareManager agentArchClass Argo;
+	    communicator agentArchClass Communicator;
+
+	aslSourcePath:
+		"src/example/source_tractor/asl";
+}
